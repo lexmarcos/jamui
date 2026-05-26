@@ -1,0 +1,43 @@
+@source './lib/**/*.{svelte,ts}';
+
+@theme {
+  --color-jam-bg: #1713c8;
+  --color-jam-surface: #1410bd;
+  --color-jam-surface-strong: #1110aa;
+  --color-jam-input: #0f0ca4;
+  --color-jam-text: #fbfbff;
+  --color-jam-muted: #d8d7ff;
+  --color-jam-soft: #bdbcff;
+  --color-jam-danger: #e81123;
+
+  --font-jam-mono: ui-monospace, 'SFMono-Regular', 'Cascadia Code', 'Liberation Mono', Menlo,
+    'JetBrains Mono', monospace;
+
+  --shadow-jam-hard-sm: 6px 6px 0 rgba(255, 255, 255, 0.16);
+  --shadow-jam-hard-md: 8px 8px 0 rgba(255, 255, 255, 0.16);
+  --shadow-jam-hard-blue-sm: 6px 6px 0 rgba(23, 19, 200, 0.35);
+  --shadow-jam-hard-blue-md: 8px 8px 0 rgba(23, 19, 200, 0.35);
+}
+
+@layer base {
+  :where(.jamui-root) {
+    min-height: 100%;
+    background: var(--color-jam-bg);
+    color: var(--color-jam-text);
+    font-family: var(--font-jam-mono);
+    text-rendering: geometricPrecision;
+  }
+
+  :where(.jamui-root *) {
+    box-sizing: border-box;
+  }
+
+  :where(.jamui-root button, .jamui-root input) {
+    font: inherit;
+  }
+
+  :where(.jamui-root ::selection) {
+    color: var(--color-jam-bg);
+    background: var(--color-jam-text);
+  }
+}
