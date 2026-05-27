@@ -23,29 +23,54 @@
 
   $effect(() => {
     const node = itemRef;
+    subCtx?.setTriggerRef(node);
+
     if (node && ctx) {
       index = ctx.registerItem(node, disabled);
       return () => {
         ctx.unregisterItem(node);
+        subCtx?.setTriggerRef(null);
       };
     }
+
+    return () => {
+      subCtx?.setTriggerRef(null);
+    };
   });
 
-  function handleMouseEnter() {
+  function openSubmenu() {
     if (!ctx || disabled) return;
     ctx.setActiveIndex(index);
+    subCtx?.cancelClose();
     subCtx?.setOpen(true);
   }
 
-  function handleMouseLeave() {
-    if (!ctx) return;
+  function handleClick(e: MouseEvent) {
+    rest.onclick?.(e as MouseEvent & { currentTarget: EventTarget & HTMLButtonElement });
+    if (e.defaultPrevented) return;
+    openSubmenu();
+  }
+
+  function handleMouseEnter(e: MouseEvent) {
+    rest.onmouseenter?.(e as MouseEvent & { currentTarget: EventTarget & HTMLButtonElement });
+    if (e.defaultPrevented) return;
+    openSubmenu();
+  }
+
+  function handleMouseLeave(e: MouseEvent) {
+    rest.onmouseleave?.(e as MouseEvent & { currentTarget: EventTarget & HTMLButtonElement });
+    if (e.defaultPrevented) return;
+    subCtx?.scheduleClose();
   }
 
   function handleKeydown(e: KeyboardEvent) {
+    rest.onkeydown?.(e as KeyboardEvent & { currentTarget: EventTarget & HTMLButtonElement });
+    if (e.defaultPrevented || disabled) return;
+
     if (e.key === 'ArrowRight') {
       e.preventDefault();
       e.stopPropagation();
-      subCtx?.setOpen(true);
+      openSubmenu();
     }
     if (e.key === 'ArrowLeft') {
       e.preventDefault();
@@ -78,8 +103,9 @@
   onmouseenter={handleMouseEnter}
   onmouseleave={handleMouseLeave}
   onkeydown={handleKeydown}
+  onclick={handleClick}
 >
-  <span class="flex-1 truncate text-left">
+  <span class="flex min-w-0 flex-1 items-center gap-2 truncate text-left [&>svg]:h-4 [&>svg]:w-4 [&>svg]:shrink-0">
     {#if children}
       {@render children()}
     {/if}

@@ -26,6 +26,9 @@ export type ContextMenuSubContext = {
   open: boolean;
   setOpen: (open: boolean) => void;
   triggerRef: HTMLButtonElement | null;
+  setTriggerRef: (node: HTMLButtonElement | null) => void;
+  scheduleClose: () => void;
+  cancelClose: () => void;
 };
 
 export const CONTEXT_MENU_SUB = Symbol('context-menu-sub');
@@ -103,7 +106,7 @@ export type ContextMenuSubTriggerProps = Omit<HTMLButtonAttributes, 'class'> & {
   disabled?: boolean;
 };
 
-export type ContextMenuSubContentProps = {
+export type ContextMenuSubContentProps = Omit<HTMLAttributes<HTMLDivElement>, 'class'> & {
   children?: Snippet;
   class?: string;
 };

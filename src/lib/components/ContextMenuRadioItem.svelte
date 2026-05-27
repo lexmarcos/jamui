@@ -76,7 +76,7 @@
       <Circle size={10} fill="currentColor" strokeWidth={0} aria-hidden="true" />
     {/if}
   </span>
-  <span class="flex-1 truncate text-left">
+  <span class="flex min-w-0 flex-1 items-center gap-2 truncate text-left [&>svg]:h-4 [&>svg]:w-4 [&>svg]:shrink-0">
     {#if children}
       {@render children()}
     {/if}

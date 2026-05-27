@@ -45,7 +45,7 @@
   }
 
   const baseClass =
-    'relative flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-xs font-bold font-jam-mono tracking-[0.06em] outline-none transition-colors duration-100';
+    'relative flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-xs font-bold font-jam-mono tracking-[0.06em] outline-none transition-colors duration-100 [&>svg]:h-4 [&>svg]:w-4 [&>svg]:shrink-0';
 
   const enabledNormalClass = 'text-jam-bg hover:bg-jam-bg hover:text-jam-text focus:bg-jam-bg focus:text-jam-text';
   const enabledDestructiveClass = 'text-jam-danger hover:bg-jam-danger hover:text-jam-text focus:bg-jam-danger focus:text-jam-text';

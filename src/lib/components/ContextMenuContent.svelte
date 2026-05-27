@@ -135,9 +135,9 @@
 
   function handleClickOutside(e: MouseEvent) {
     const target = e.target as Node;
-    if (menuRef && !menuRef.contains(target)) {
-      close();
-    }
+    const targetElement = target instanceof Element ? target : target.parentElement;
+    if (menuRef?.contains(target) || targetElement?.closest('[data-context-menu-layer]')) return;
+    close();
   }
 
   function calculatePosition() {
@@ -216,6 +216,7 @@
     bind:this={menuRef}
     role="menu"
     tabindex="-1"
+    data-context-menu-layer
     class={`${baseClass} ${animClass} ${className}`.trim()}
     style={positionStyle}
     onkeydown={handleKeydown}

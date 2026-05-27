@@ -13,10 +13,10 @@
   let {
     children,
     class: className = '',
+    ...rest
   }: ContextMenuSubContentProps = $props();
 
   const rootCtx = getContext<ContextMenuRootContext>(CONTEXT_MENU_ROOT);
-  const parentCtx = getContext<ContextMenuContentContext>(CONTEXT_MENU_CONTENT);
   const subCtx = getContext<ContextMenuSubContext>(CONTEXT_MENU_SUB);
 
   let menuRef = $state<HTMLDivElement | null>(null);
@@ -61,7 +61,7 @@
 
   function closeSub() {
     subCtx?.setOpen(false);
-    parentCtx?.menuRef?.focus();
+    subCtx?.triggerRef?.focus();
   }
 
   function getFirstEnabled(): number {
@@ -155,8 +155,9 @@
     const triggerRect = subCtx.triggerRef.getBoundingClientRect();
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    const menuW = menuRef.offsetWidth || 160;
-    const menuH = menuRef.offsetHeight || 200;
+    const menuRect = menuRef.getBoundingClientRect();
+    const menuW = menuRef.offsetWidth || menuRect.width || 160;
+    const menuH = menuRef.offsetHeight || menuRect.height || 200;
 
     let left = triggerRect.right + 4;
     let top = triggerRect.top;
@@ -168,6 +169,8 @@
     if (top + menuH > vh - 8) {
       top = vh - menuH - 8;
     }
+    if (left + menuW > vw - 8) left = vw - menuW - 8;
+    if (left < 8) left = 8;
     if (top < 8) top = 8;
 
     positionStyle = `left: ${left}px; top: ${top}px;`;
@@ -179,9 +182,17 @@
       activeIndex = -1;
       tick().then(() => {
         if (!menuRef) return;
-        animating = true;
         calculatePosition();
-        menuRef.focus();
+        animating = true;
+
+        tick().then(() => {
+          const first = getFirstEnabled();
+          if (first !== -1) {
+            setActiveIndex(first);
+          } else {
+            menuRef?.focus();
+          }
+        });
       });
     } else {
       animating = false;
@@ -194,14 +205,11 @@
   });
 
   function handleMouseLeave() {
-    const timer = setTimeout(() => {
-      subCtx?.setOpen(false);
-    }, 200);
-    return () => clearTimeout(timer);
+    subCtx?.scheduleClose();
   }
 
   function handleMouseEnterContent() {
-    // Prevent closing
+    subCtx?.cancelClose();
   }
 
   setContext<ContextMenuContentContext>(CONTEXT_MENU_CONTENT, {
@@ -223,9 +231,11 @@
 
 {#if visible}
   <div
+    {...rest}
     bind:this={menuRef}
     role="menu"
     tabindex="-1"
+    data-context-menu-layer
     class={`${baseClass} ${animClass} ${className}`.trim()}
     style={positionStyle}
     onkeydown={handleKeydown}

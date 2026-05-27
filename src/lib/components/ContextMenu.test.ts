@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
+import ContextMenuSubTest from './ContextMenuSubTest.svelte';
 import ContextMenuTest from './ContextMenuTest.svelte';
 
 async function openContextMenu() {
@@ -162,5 +163,60 @@ describe('ContextMenu', () => {
     render(ContextMenuTest);
     const trigger = screen.getByTestId('trigger');
     expect(trigger).toBeTruthy();
+  });
+
+  it('abre e posiciona submenu a partir do trigger correto', async () => {
+    render(ContextMenuSubTest);
+    const user = await openContextMenu();
+
+    await user.hover(screen.getByRole('menuitem', { name: /open with/i }));
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('menu').length).toBe(2);
+    });
+
+    const submenu = screen.getByTestId('submenu');
+    expect(submenu.getAttribute('style')).toMatch(/left:\s*\d+px;\s*top:\s*\d+px/);
+  });
+
+  it('permite selecionar item dentro de submenu portaled', async () => {
+    const onSubItemClick = vi.fn();
+    render(ContextMenuSubTest, { onSubItemClick });
+    const user = await openContextMenu();
+
+    await user.hover(screen.getByRole('menuitem', { name: /open with/i }));
+    await waitFor(() => {
+      expect(screen.getAllByRole('menu').length).toBe(2);
+    });
+
+    await user.click(screen.getByRole('menuitem', { name: 'Browser' }));
+
+    expect(onSubItemClick).toHaveBeenCalledWith('browser');
+    expect(onSubItemClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('abre submenu com teclado e retorna foco ao trigger com ArrowLeft', async () => {
+    render(ContextMenuSubTest);
+    const user = await openContextMenu();
+
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{ArrowDown}');
+
+    const subTrigger = screen.getByRole('menuitem', { name: /open with/i });
+    expect(document.activeElement).toBe(subTrigger);
+
+    await user.keyboard('{ArrowRight}');
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('menu').length).toBe(2);
+    });
+    expect(document.activeElement?.textContent).toContain('Default App');
+
+    await user.keyboard('{ArrowLeft}');
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('menu').length).toBe(1);
+    });
+    expect(document.activeElement).toBe(subTrigger);
   });
 });
