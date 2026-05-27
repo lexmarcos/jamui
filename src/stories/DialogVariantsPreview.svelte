@@ -1,18 +1,16 @@
 <script lang="ts">
-  import {
-    Dialog,
-    DialogTrigger,
-    DialogPortal,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogFooter,
-    DialogClose,
-    Button,
-    TextInput,
-    Textarea
-  } from '../lib';
+  import Button from '../lib/components/Button.svelte';
+  import Dialog from '../lib/components/Dialog.svelte';
+  import DialogClose from '../lib/components/DialogClose.svelte';
+  import DialogContent from '../lib/components/DialogContent.svelte';
+  import DialogDescription from '../lib/components/DialogDescription.svelte';
+  import DialogFooter from '../lib/components/DialogFooter.svelte';
+  import DialogHeader from '../lib/components/DialogHeader.svelte';
+  import DialogPortal from '../lib/components/DialogPortal.svelte';
+  import DialogTitle from '../lib/components/DialogTitle.svelte';
+  import DialogTrigger from '../lib/components/DialogTrigger.svelte';
+  import TextInput from '../lib/components/TextInput.svelte';
+  import Textarea from '../lib/components/Textarea.svelte';
 
   let confirmationOpen = $state(false);
   let formOpen = $state(false);
@@ -26,14 +24,45 @@
   let formName = $state('');
   let formEmail = $state('');
   let formMessage = $state('');
+
+  const anatomyCode = `<Dialog bind:open>
+  <DialogTrigger asChild>...</DialogTrigger>
+  <DialogPortal>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Titulo</DialogTitle>
+        <DialogDescription>Descricao</DialogDescription>
+      </DialogHeader>
+      <DialogFooter>
+        <DialogClose>Fechar</DialogClose>
+      </DialogFooter>
+    </DialogContent>
+  </DialogPortal>
+</Dialog>`;
 </script>
 
 <div class="jamui-root min-h-screen bg-jam-bg p-8">
   <div class="mx-auto max-w-4xl space-y-8">
-    <h1 class="text-2xl font-black uppercase tracking-wider text-jam-text">Dialog Variants</h1>
+    <div class="grid gap-3 border border-jam-text/20 bg-jam-surface p-5 shadow-jam-hard-sm">
+      <p class="text-[10px] font-black uppercase tracking-[0.22em] text-jam-soft">Documentacao</p>
+      <h1 class="text-2xl font-black uppercase tracking-wider text-jam-text">Dialog</h1>
+      <p class="max-w-3xl text-xs font-medium leading-relaxed text-jam-muted">
+        Dialog cria uma camada modal para decisoes, formularios curtos e fluxos que precisam interromper a tela atual.
+        A composicao explicita deixa claro onde fica o trigger, o portal, o painel, a semantica do titulo e as acoes.
+      </p>
+    </div>
+
+    <div class="grid gap-4 border border-jam-text/20 bg-jam-input p-5">
+      <h2 class="text-lg font-bold uppercase tracking-wide text-jam-text">Anatomia recomendada</h2>
+      <pre class="overflow-x-auto border border-jam-text/20 bg-jam-bg p-4 text-[11px] font-bold leading-relaxed text-jam-muted"><code>{anatomyCode}</code></pre>
+      <p class="text-xs font-medium leading-relaxed text-jam-muted">
+        Para botoes customizados, passe <code class="text-jam-text">asChild</code> e renderize o snippet <code class="text-jam-text">child</code>.
+        <code class="text-jam-text">DialogTitle</code> e <code class="text-jam-text">DialogDescription</code> alimentam os atributos ARIA do painel automaticamente.
+      </p>
+    </div>
 
     <div class="grid gap-4">
-      <h2 class="text-lg font-bold uppercase tracking-wide text-jam-text">Basic Dialog</h2>
+      <h2 class="text-lg font-bold uppercase tracking-wide text-jam-text">Tamanhos</h2>
       <div class="flex flex-wrap gap-3">
         <Dialog>
           <DialogTrigger asChild>
@@ -44,15 +73,15 @@
           <DialogPortal>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Default Dialog</DialogTitle>
+                <DialogTitle>Dialog padrao</DialogTitle>
                 <DialogDescription>
-                  This is a medium-sized dialog with default settings.
+                  Tamanho medio para confirmacoes e conteudo curto.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
                 <DialogClose asChild>
                   {#snippet child({ props })}
-                    <Button {...props} variant="secondary">Close</Button>
+                    <Button {...props} variant="secondary">Fechar</Button>
                   {/snippet}
                 </DialogClose>
               </DialogFooter>
@@ -69,9 +98,9 @@
           <DialogPortal>
             <DialogContent size="sm">
               <DialogHeader>
-                <DialogTitle>Small Dialog</DialogTitle>
+                <DialogTitle>Dialog pequeno</DialogTitle>
                 <DialogDescription>
-                  This is a small-sized dialog.
+                  Use para mensagens objetivas com uma acao simples.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
@@ -94,9 +123,9 @@
           <DialogPortal>
             <DialogContent size="lg">
               <DialogHeader>
-                <DialogTitle>Large Dialog</DialogTitle>
+                <DialogTitle>Dialog grande</DialogTitle>
                 <DialogDescription>
-                  This is a large-sized dialog with more space for content.
+                  Use quando o conteudo precisa de mais respiro ou multiplas linhas.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
@@ -119,9 +148,9 @@
           <DialogPortal>
             <DialogContent size="xl">
               <DialogHeader>
-                <DialogTitle>Extra Large Dialog</DialogTitle>
+                <DialogTitle>Dialog extra grande</DialogTitle>
                 <DialogDescription>
-                  This is an extra large dialog with maximum width for complex content.
+                  Use para fluxos mais densos sem ocupar a tela inteira.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
@@ -138,30 +167,30 @@
     </div>
 
     <div class="grid gap-4">
-      <h2 class="text-lg font-bold uppercase tracking-wide text-jam-text">Confirmation Dialog</h2>
+      <h2 class="text-lg font-bold uppercase tracking-wide text-jam-text">Confirmacao</h2>
       <Dialog bind:open={confirmationOpen}>
         <DialogTrigger asChild>
           {#snippet child({ props })}
-            <Button {...props} variant="primary">Open Confirmation</Button>
+            <Button {...props} variant="primary">Abrir confirmacao</Button>
           {/snippet}
         </DialogTrigger>
         <DialogPortal>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Confirm Action</DialogTitle>
+              <DialogTitle>Confirmar acao</DialogTitle>
               <DialogDescription>
-                Are you sure you want to proceed? This action cannot be undone.
+                Revise a operacao antes de continuar. Use acoes explicitas para confirmar ou cancelar.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
               <DialogClose asChild>
                 {#snippet child({ props })}
-                  <Button {...props} variant="secondary">Cancel</Button>
+                  <Button {...props} variant="secondary">Cancelar</Button>
                 {/snippet}
               </DialogClose>
               <DialogClose asChild>
                 {#snippet child({ props })}
-                  <Button {...props} variant="primary">Confirm</Button>
+                  <Button {...props} variant="primary">Confirmar</Button>
                 {/snippet}
               </DialogClose>
             </DialogFooter>
@@ -171,32 +200,32 @@
     </div>
 
     <div class="grid gap-4">
-      <h2 class="text-lg font-bold uppercase tracking-wide text-jam-text">Form Dialog</h2>
+      <h2 class="text-lg font-bold uppercase tracking-wide text-jam-text">Formulario</h2>
       <Dialog bind:open={formOpen}>
         <DialogTrigger asChild>
           {#snippet child({ props })}
-            <Button {...props} variant="primary">Open Form</Button>
+            <Button {...props} variant="primary">Abrir formulario</Button>
           {/snippet}
         </DialogTrigger>
         <DialogPortal>
           <DialogContent size="lg">
             <DialogHeader>
-              <DialogTitle>Contact Form</DialogTitle>
+              <DialogTitle>Formulario de contato</DialogTitle>
               <DialogDescription>
-                Fill out the form below and we'll get back to you soon.
+                Use para formularios curtos. Para fluxos longos, prefira uma pagina dedicada ou dialog full.
               </DialogDescription>
             </DialogHeader>
             <form class="space-y-4" onsubmit={(e) => { e.preventDefault(); formOpen = false; }}>
-              <TextInput label="Name" bind:value={formName} placeholder="John Doe" />
+              <TextInput label="Nome" bind:value={formName} placeholder="Markzuel" />
               <TextInput label="Email" type="email" bind:value={formEmail} placeholder="john@example.com" />
-              <Textarea label="Message" bind:value={formMessage} placeholder="Your message..." rows={4} />
+              <Textarea label="Mensagem" bind:value={formMessage} placeholder="Digite a mensagem..." rows={4} />
               <DialogFooter>
                 <DialogClose asChild>
                   {#snippet child({ props })}
-                    <Button {...props} variant="secondary" type="button">Cancel</Button>
+                    <Button {...props} variant="secondary" type="button">Cancelar</Button>
                   {/snippet}
                 </DialogClose>
-                <Button variant="primary" type="submit">Send Message</Button>
+                <Button variant="primary" type="submit">Enviar</Button>
               </DialogFooter>
             </form>
           </DialogContent>
@@ -205,30 +234,30 @@
     </div>
 
     <div class="grid gap-4">
-      <h2 class="text-lg font-bold uppercase tracking-wide text-jam-text">Destructive Dialog</h2>
+      <h2 class="text-lg font-bold uppercase tracking-wide text-jam-text">Acao destrutiva</h2>
       <Dialog bind:open={destructiveOpen}>
         <DialogTrigger asChild>
           {#snippet child({ props })}
-            <Button {...props} variant="danger">Delete Item</Button>
+            <Button {...props} variant="danger">Excluir item</Button>
           {/snippet}
         </DialogTrigger>
         <DialogPortal>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Delete Item</DialogTitle>
+              <DialogTitle>Excluir item</DialogTitle>
               <DialogDescription>
-                Are you sure you want to delete this item? This action cannot be undone and all associated data will be permanently removed.
+                Esta acao nao pode ser desfeita. Deixe a acao destrutiva explicita e mantenha cancelar como primeira opcao.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
               <DialogClose asChild>
                 {#snippet child({ props })}
-                  <Button {...props} variant="secondary">Cancel</Button>
+                  <Button {...props} variant="secondary">Cancelar</Button>
                 {/snippet}
               </DialogClose>
               <DialogClose asChild>
                 {#snippet child({ props })}
-                  <Button {...props} variant="danger">Delete</Button>
+                  <Button {...props} variant="danger">Excluir</Button>
                 {/snippet}
               </DialogClose>
             </DialogFooter>
@@ -238,19 +267,19 @@
     </div>
 
     <div class="grid gap-4">
-      <h2 class="text-lg font-bold uppercase tracking-wide text-jam-text">Fullscreen Dialog</h2>
+      <h2 class="text-lg font-bold uppercase tracking-wide text-jam-text">Tela cheia</h2>
       <Dialog bind:open={fullscreenOpen}>
         <DialogTrigger asChild>
           {#snippet child({ props })}
-            <Button {...props} variant="primary">Open Fullscreen</Button>
+            <Button {...props} variant="primary">Abrir tela cheia</Button>
           {/snippet}
         </DialogTrigger>
         <DialogPortal>
           <DialogContent size="full" class="h-screen max-h-screen">
             <DialogHeader>
-              <DialogTitle>Fullscreen Dialog</DialogTitle>
+              <DialogTitle>Dialog em tela cheia</DialogTitle>
               <DialogDescription>
-                This dialog takes up the entire screen. Perfect for complex workflows or detailed views.
+                Use para fluxos complexos que ainda precisam preservar o contexto da tela anterior.
               </DialogDescription>
             </DialogHeader>
             <div class="flex-1 overflow-auto py-4">
@@ -261,12 +290,12 @@
             <DialogFooter>
               <DialogClose asChild>
                 {#snippet child({ props })}
-                  <Button {...props} variant="secondary">Close</Button>
+                  <Button {...props} variant="secondary">Fechar</Button>
                 {/snippet}
               </DialogClose>
               <DialogClose asChild>
                 {#snippet child({ props })}
-                  <Button {...props} variant="primary">Save Changes</Button>
+                  <Button {...props} variant="primary">Salvar</Button>
                 {/snippet}
               </DialogClose>
             </DialogFooter>
@@ -276,30 +305,30 @@
     </div>
 
     <div class="grid gap-4">
-      <h2 class="text-lg font-bold uppercase tracking-wide text-jam-text">No Overlay Close</h2>
+      <h2 class="text-lg font-bold uppercase tracking-wide text-jam-text">Sem fechar pelo overlay</h2>
       <Dialog bind:open={noOverlayCloseOpen}>
         <DialogTrigger asChild>
           {#snippet child({ props })}
-            <Button {...props} variant="primary">Open (No Overlay Close)</Button>
+            <Button {...props} variant="primary">Abrir bloqueante</Button>
           {/snippet}
         </DialogTrigger>
         <DialogPortal>
           <DialogContent closeOnOverlayClick={false}>
             <DialogHeader>
-              <DialogTitle>Important Action Required</DialogTitle>
+              <DialogTitle>Acao obrigatoria</DialogTitle>
               <DialogDescription>
-                This dialog cannot be closed by clicking the overlay. You must use the buttons below or press Escape.
+                Este dialog nao fecha ao clicar no overlay. Use para decisoes que exigem resposta explicita.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
               <DialogClose asChild>
                 {#snippet child({ props })}
-                  <Button {...props} variant="secondary">Cancel</Button>
+                  <Button {...props} variant="secondary">Cancelar</Button>
                 {/snippet}
               </DialogClose>
               <DialogClose asChild>
                 {#snippet child({ props })}
-                  <Button {...props} variant="primary">Confirm</Button>
+                  <Button {...props} variant="primary">Confirmar</Button>
                 {/snippet}
               </DialogClose>
             </DialogFooter>
