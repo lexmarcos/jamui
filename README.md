@@ -50,6 +50,7 @@ Principais tokens:
 
 - `Button`: variantes `primary`, `secondary` e `ghost`; tamanhos `sm`, `md`, `lg`.
 - `TextInput`: input de texto com label, hint, erro e `bind:value`.
+- `DatePicker`: seletor de data e intervalo (`mode="range"`) com calendario, entrada manual, limites, estados e variantes.
 
 ## Build
 
