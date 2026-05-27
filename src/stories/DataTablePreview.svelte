@@ -424,8 +424,8 @@
     overflow: auto;
     padding: clamp(1rem, 2vw, 2rem);
     background:
-      linear-gradient(rgba(251, 251, 255, 0.045) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(251, 251, 255, 0.045) 1px, transparent 1px),
+      linear-gradient(color-mix(in srgb, var(--color-jam-text) 5%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--color-jam-text) 5%, transparent) 1px, transparent 1px),
       var(--color-jam-bg);
     background-size: 24px 24px, 24px 24px, auto;
   }
@@ -443,15 +443,15 @@
     grid-template-columns: minmax(0, 1fr) minmax(34rem, 0.85fr);
     gap: 1rem;
     align-items: stretch;
-    border: 1px solid rgba(251, 251, 255, 0.28);
-    background: rgba(20, 16, 189, 0.88);
+    border: 1px solid color-mix(in srgb, var(--color-jam-text) 28%, transparent);
+    background: color-mix(in srgb, var(--color-jam-surface) 88%, var(--color-jam-bg));
     box-shadow: var(--shadow-jam-hard-md);
   }
 
   .story-title {
     min-width: 0;
     padding: 1rem 1.125rem;
-    border-right: 1px solid rgba(251, 251, 255, 0.16);
+    border-right: 1px solid color-mix(in srgb, var(--color-jam-text) 16%, transparent);
   }
 
   .story-kicker {
@@ -473,7 +473,7 @@
   .story-title p {
     max-width: 64rem;
     margin: 0.625rem 0 0;
-    color: rgba(216, 215, 255, 0.86);
+    color: color-mix(in srgb, var(--color-jam-muted) 86%, transparent);
     font-size: 0.6875rem;
     font-weight: 650;
     letter-spacing: 0.06em;
@@ -492,12 +492,12 @@
     align-content: center;
     gap: 0.35rem;
     padding: 0.875rem;
-    border-left: 1px solid rgba(251, 251, 255, 0.12);
-    background: rgba(15, 12, 164, 0.62);
+    border-left: 1px solid color-mix(in srgb, var(--color-jam-text) 12%, transparent);
+    background: color-mix(in srgb, var(--color-jam-input) 68%, var(--color-jam-surface));
   }
 
   .story-metric span {
-    color: rgba(189, 188, 255, 0.78);
+    color: color-mix(in srgb, var(--color-jam-soft) 78%, transparent);
     font-size: 0.5625rem;
     font-weight: 900;
     letter-spacing: 0.18em;
@@ -521,8 +521,8 @@
     grid-template-columns: auto minmax(12rem, 0.72fr) minmax(16rem, 1fr);
     align-items: center;
     min-width: 0;
-    border: 1px solid rgba(251, 251, 255, 0.24);
-    background: rgba(15, 12, 164, 0.78);
+    border: 1px solid color-mix(in srgb, var(--color-jam-text) 24%, transparent);
+    background: color-mix(in srgb, var(--color-jam-input) 78%, var(--color-jam-surface));
     box-shadow: var(--shadow-jam-hard-sm);
   }
 
@@ -530,7 +530,7 @@
     min-width: 0;
     margin: 0;
     padding: 0.625rem 0.875rem;
-    border-left: 1px solid rgba(251, 251, 255, 0.12);
+    border-left: 1px solid color-mix(in srgb, var(--color-jam-text) 12%, transparent);
   }
 
   .story-activity > *:first-child {
@@ -545,7 +545,7 @@
 
   .story-activity span,
   .story-activity p {
-    color: rgba(189, 188, 255, 0.82);
+    color: color-mix(in srgb, var(--color-jam-soft) 82%, transparent);
     font-size: 0.625rem;
     font-weight: 900;
     letter-spacing: 0.16em;
@@ -574,7 +574,7 @@
 
     .story-title {
       border-right: 0;
-      border-bottom: 1px solid rgba(251, 251, 255, 0.16);
+      border-bottom: 1px solid color-mix(in srgb, var(--color-jam-text) 16%, transparent);
     }
 
     .story-summary {
@@ -588,7 +588,7 @@
 
     .story-activity > p:last-child {
       grid-column: 1 / -1;
-      border-top: 1px solid rgba(251, 251, 255, 0.12);
+      border-top: 1px solid color-mix(in srgb, var(--color-jam-text) 12%, transparent);
       border-left: 0;
     }
   }
@@ -604,7 +604,7 @@
     }
 
     .story-metric {
-      border-top: 1px solid rgba(251, 251, 255, 0.12);
+      border-top: 1px solid color-mix(in srgb, var(--color-jam-text) 12%, transparent);
     }
 
     .story-activity {
@@ -613,7 +613,7 @@
 
     .story-activity > * {
       border-left: 0;
-      border-top: 1px solid rgba(251, 251, 255, 0.12);
+      border-top: 1px solid color-mix(in srgb, var(--color-jam-text) 12%, transparent);
     }
 
     .story-activity > *:first-child {
