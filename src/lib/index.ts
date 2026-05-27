@@ -72,6 +72,25 @@ export { default as RadioGroup } from './components/RadioGroup.svelte';
 export { default as RadioItem } from './components/RadioItem.svelte';
 export { default as Select } from './components/Select.svelte';
 export { default as SelectOption } from './components/SelectOption.svelte';
+export { default as Separator } from './components/Separator.svelte';
+export { default as Sidebar } from './components/Sidebar.svelte';
+export { default as SidebarContent } from './components/SidebarContent.svelte';
+export { default as SidebarFooter } from './components/SidebarFooter.svelte';
+export { default as SidebarGroup } from './components/SidebarGroup.svelte';
+export { default as SidebarGroupContent } from './components/SidebarGroupContent.svelte';
+export { default as SidebarGroupLabel } from './components/SidebarGroupLabel.svelte';
+export { default as SidebarHeader } from './components/SidebarHeader.svelte';
+export { default as SidebarInset } from './components/SidebarInset.svelte';
+export { default as SidebarMenu } from './components/SidebarMenu.svelte';
+export { default as SidebarMenuButton } from './components/SidebarMenuButton.svelte';
+export { default as SidebarMenuItem } from './components/SidebarMenuItem.svelte';
+export { default as SidebarMenuSub } from './components/SidebarMenuSub.svelte';
+export { default as SidebarMenuSubButton } from './components/SidebarMenuSubButton.svelte';
+export { default as SidebarMenuSubItem } from './components/SidebarMenuSubItem.svelte';
+export { default as SidebarProvider } from './components/SidebarProvider.svelte';
+export { default as SidebarRail } from './components/SidebarRail.svelte';
+export { default as SidebarSeparator } from './components/SidebarSeparator.svelte';
+export { default as SidebarTrigger } from './components/SidebarTrigger.svelte';
 export { default as Slider } from './components/Slider.svelte';
 export { default as Switch } from './components/Switch.svelte';
 export { default as Table } from './components/Table.svelte';
@@ -88,6 +107,7 @@ export { default as TabTrigger } from './components/TabTrigger.svelte';
 export { default as TextInput } from './components/TextInput.svelte';
 export { default as Textarea } from './components/Textarea.svelte';
 export { default as Tooltip } from './components/Tooltip.svelte';
+export { applyJamTheme, createJamThemeStyle, getJamThemePreset, JAM_THEME_CSS_VARIABLES, JAM_THEME_PRESETS, JAM_THEME_TOKEN_NAMES } from './theme';
 export type { AlertProps, AlertVariant } from './components/alert';
 export type { AccordionContentProps, AccordionHeadingLevel, AccordionItemProps, AccordionProps, AccordionSize, AccordionTriggerProps, AccordionType, AccordionVariant } from './components/accordion';
 export type { AvatarProps, AvatarSize } from './components/avatar';
@@ -130,6 +150,30 @@ export type { PopoverAlign, PopoverAnchorProps, PopoverCloseProps, PopoverPositi
 export type { ProgressProps, ProgressSize, ProgressVariant } from './components/progress';
 export type { RadioGroupProps, RadioItemProps, RadioOrientation } from './components/radio';
 export type { SelectOptionProps, SelectProps, SelectSize } from './components/select';
+export type { SeparatorOrientation, SeparatorProps, SeparatorSize, SeparatorVariant } from './components/separator';
+export type {
+  SidebarCollapsible,
+  SidebarContext,
+  SidebarGroupContentProps,
+  SidebarGroupLabelProps,
+  SidebarInsetProps,
+  SidebarMenuButtonProps,
+  SidebarMenuItemProps,
+  SidebarMenuProps,
+  SidebarMenuSize,
+  SidebarMenuSubButtonProps,
+  SidebarMenuSubItemProps,
+  SidebarMenuSubProps,
+  SidebarProps,
+  SidebarProviderProps,
+  SidebarRailProps,
+  SidebarSectionProps,
+  SidebarSeparatorProps,
+  SidebarSide,
+  SidebarState,
+  SidebarTriggerProps,
+  SidebarVariant
+} from './components/sidebar';
 export type { SliderProps, SliderSize, SliderVariant } from './components/slider';
 export type { SwitchProps, SwitchSize, SwitchVariant } from './components/switch';
 export type { TableBodyProps, TableCaptionProps, TableCellProps, TableHeadProps, TableHeaderProps, TableProps, TableRowProps, TableSize } from './components/table';
@@ -137,3 +181,4 @@ export type { TabGroupProps, TabListProps, TabPanelProps, TabTriggerProps } from
 export type { TextInputProps } from './components/text-input';
 export type { TextareaProps, TextareaResize, TextareaSize } from './components/textarea';
 export type { TooltipProps, TooltipPosition } from './components/tooltip';
+export type { JamThemeName, JamThemeTokenName, JamThemeTokens } from './theme';
