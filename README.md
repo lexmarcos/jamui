@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://i.imgur.com/ltKEcsJ.png" alt="JamUI" width="120" />
+  <img src="https://i.imgur.com/ltKEcsJ.png" alt="JamUI" width="450" />
 </p>
 
 # JamUI
