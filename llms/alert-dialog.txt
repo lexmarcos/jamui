@@ -1,0 +1,254 @@
+# JamUI — AlertDialog
+
+> A high-contrast, modal alert dialog component for critical confirmations and destructive actions.
+
+## AlertDialog API & Usage Guide
+
+The JamUI AlertDialog is a modal dialog designed for important user decisions that require acknowledgment or confirmation. It uses Svelte 5 Runes (`$state`, `$derived`, `$props`, `$bindable`) and context-based state management for parent-child communication. The dialog manages its own open/close animations, focus trapping, and keyboard interactions. It is composed of composable sub-components: Content, Header, Title, Description, Footer, Action, and Cancel.
+
+### Component Structure
+
+- `AlertDialogContent`: Root container managing open state, overlay, panel, focus trap, and animations.
+- `AlertDialogHeader`: Flex container for the title and description.
+- `AlertDialogTitle`: The dialog heading rendered as an `<h2>`.
+- `AlertDialogDescription`: The dialog description paragraph.
+- `AlertDialogFooter`: Flex container for action buttons, aligned to the right.
+- `AlertDialogAction`: Primary action button that closes the dialog on click.
+- `AlertDialogCancel`: Secondary cancel button that closes the dialog on click.
+
+---
+
+## Components API
+
+### AlertDialogContent.svelte
+
+Root container that renders the overlay and dialog panel. Manages open/close state, animations, and focus trapping.
+
+#### Props
+- `open`: `boolean` (bindable, default: `false`). Controls whether the dialog is open.
+- `onopenchange`: `(open: boolean) => void`. Callback fired when the dialog open state changes.
+- `children`: `Snippet`. Dialog sub-components (Header, Footer, etc.).
+- `class`: `string` (default: `''`). Additional CSS classes merged with the panel styles.
+
+---
+
+### AlertDialogHeader.svelte
+
+Flex container for the dialog title and description.
+
+#### Props
+- `children`: `Snippet`. Title and description sub-components.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### AlertDialogTitle.svelte
+
+The dialog heading. Renders as an `<h2>` element.
+
+#### Props
+- `children`: `Snippet`. Title text content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### AlertDialogDescription.svelte
+
+The dialog description. Renders as a `<p>` element.
+
+#### Props
+- `children`: `Snippet`. Description text content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### AlertDialogFooter.svelte
+
+Flex container for the dialog action buttons, aligned to the right.
+
+#### Props
+- `children`: `Snippet`. Action and cancel buttons.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### AlertDialogAction.svelte
+
+Primary action button. Closes the dialog when clicked.
+
+#### Props
+- `children`: `Snippet`. Button label content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- All standard `HTMLButtonAttributes` are forwarded.
+
+---
+
+### AlertDialogCancel.svelte
+
+Secondary cancel button. Closes the dialog when clicked.
+
+#### Props
+- `children`: `Snippet`. Button label content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- All standard `HTMLButtonAttributes` are forwarded.
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Overlay:
+- Base: `fixed inset-0 z-50 bg-jam-bg/80 px-4 transition-opacity duration-200 ease-out`
+- Visible: `opacity-100`
+- Hidden: `opacity-0 pointer-events-none`
+
+#### Panel:
+- Base: `fixed inset-x-4 top-1/2 z-[51] mx-auto w-full max-w-md -translate-y-1/2 border border-jam-bg/15 bg-jam-text p-6 shadow-jam-hard-blue-md transition-all duration-200 ease-out`
+- Visible: `opacity-100 scale-100`
+- Hidden: `opacity-0 scale-95 pointer-events-none`
+
+#### Action Button:
+- `inline-flex min-h-11 cursor-pointer items-center justify-center rounded-none border border-jam-bg bg-jam-bg px-4 font-black uppercase tracking-[0.2em] text-jam-text text-xs transition-all duration-150 ease-out hover:shadow-jam-hard-blue-md active:shadow-none active:bg-jam-surface-strong focus:outline-none focus-visible:ring-2 focus-visible:ring-jam-bg focus-visible:ring-offset-2 focus-visible:ring-offset-jam-text`
+
+#### Cancel Button:
+- `inline-flex min-h-11 cursor-pointer items-center justify-center rounded-none border border-jam-bg/25 bg-transparent px-4 font-black uppercase tracking-[0.2em] text-jam-bg text-xs transition-all duration-150 ease-out hover:border-jam-bg hover:bg-jam-bg/10 hover:shadow-jam-hard-blue-sm active:shadow-none active:bg-jam-bg/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-jam-bg focus-visible:ring-offset-2 focus-visible:ring-offset-jam-text`
+
+#### Title:
+- `text-[11px] font-black uppercase tracking-[0.18em] text-jam-bg`
+
+#### Description:
+- `text-xs font-medium leading-relaxed text-jam-bg/75`
+
+#### Footer:
+- `mt-4 flex justify-end gap-3`
+
+---
+
+## Examples
+
+### Basic Confirmation Dialog
+```svelte
+<script lang="ts">
+  import {
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogAction,
+    AlertDialogCancel
+  } from 'jamui';
+
+  let open = $state(false);
+</script>
+
+<button onclick={() => open = true} class="jam-button">
+  Delete Account
+</button>
+
+<AlertDialogContent bind:open>
+  <AlertDialogHeader>
+    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+    <AlertDialogDescription>
+      This action cannot be undone. Your account and all data will be permanently deleted.
+    </AlertDialogDescription>
+  </AlertDialogHeader>
+  <AlertDialogFooter>
+    <AlertDialogCancel>Cancel</AlertDialogCancel>
+    <AlertDialogAction>Delete</AlertDialogAction>
+  </AlertDialogFooter>
+</AlertDialogContent>
+```
+
+### Destructive Action with Custom Styling
+```svelte
+<script lang="ts">
+  import {
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogAction,
+    AlertDialogCancel
+  } from 'jamui';
+
+  let open = $state(false);
+
+  function handleDelete() {
+    console.log('Item deleted');
+    open = false;
+  }
+</script>
+
+<button onclick={() => open = true}>Remove Item</button>
+
+<AlertDialogContent bind:open class="max-w-sm">
+  <AlertDialogHeader>
+    <AlertDialogTitle>Remove Item</AlertDialogTitle>
+    <AlertDialogDescription>
+      This will remove the item from your workspace. Team members will lose access.
+    </AlertDialogDescription>
+  </AlertDialogHeader>
+  <AlertDialogFooter>
+    <AlertDialogCancel>Go Back</AlertDialogCancel>
+    <AlertDialogAction onclick={handleDelete}>Confirm Remove</AlertDialogAction>
+  </AlertDialogFooter>
+</AlertDialogContent>
+```
+
+### Simple Acknowledge Dialog
+```svelte
+<script lang="ts">
+  import {
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogAction
+  } from 'jamui';
+
+  let open = $state(false);
+</script>
+
+<button onclick={() => open = true}>Show Alert</button>
+
+<AlertDialogContent bind:open>
+  <AlertDialogHeader>
+    <AlertDialogTitle>Action Completed</AlertDialogTitle>
+    <AlertDialogDescription>
+      Your changes have been saved successfully.
+    </AlertDialogDescription>
+  </AlertDialogHeader>
+  <AlertDialogFooter>
+    <AlertDialogAction>OK</AlertDialogAction>
+  </AlertDialogFooter>
+</AlertDialogContent>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `Escape`: Closes the dialog (stops propagation).
+  - `Tab`: Traps focus within the dialog panel. Wraps from last to first focusable element, and from first to last with Shift+Tab.
+- **ARIA attributes managed**:
+  - `role="alertdialog"` on the dialog panel.
+  - `aria-modal="true"` on the dialog panel.
+  - `tabindex="-1"` on the dialog panel for programmatic focus.
+  - `aria-hidden="true"` on the overlay.
+  - Focus is automatically moved to the first focusable element when opened.
+  - Previous active element is restored when the dialog closes.
+- **Animations**:
+  - Overlay fades in/out with `transition-opacity duration-200`.
+  - Panel scales and fades in/out with `transition-all duration-200`.

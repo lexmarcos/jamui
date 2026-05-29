@@ -1,0 +1,133 @@
+# JamUI — Switch
+
+> A monospace, high-contrast, fully accessible toggle switch component for Svelte 5 (using Runes) and styled with Tailwind CSS.
+
+## Switch API & Usage Guide
+
+The JamUI Switch is a custom toggle built on a hidden `<input type="checkbox" role="switch">`. It uses Svelte 5 Runes (`$props`, `$state`, `$derived`, `$bindable`) and renders a track with a sliding thumb. The component supports three sizes, four color variants, optional label and description text, and renders children via Svelte 5 snippets.
+
+### Component Structure
+
+- `Switch`: A self-contained component wrapping a hidden checkbox input, a visual track/thumb, and optional text content (label, description, or children snippet).
+
+---
+
+## Components API
+
+### Switch.svelte
+
+A toggle switch control for boolean on/off states.
+
+#### Props
+- `checked`: `boolean` (bindable, default: `false`). The current toggle state. Bound two-way with `bind:checked`.
+- `children`: `Snippet` (optional). Svelte 5 snippet for custom label content. Takes precedence over `label`.
+- `class`: `string` (default: `''`). Additional CSS classes to apply to the outer label wrapper.
+- `description`: `string` (default: `''`). Optional description text displayed below the label.
+- `disabled`: `boolean` (default: `false`). Disables the switch, making it non-interactive.
+- `id`: `string` (optional). The `id` attribute for the underlying input element.
+- `label`: `string` (default: `''`). Label text displayed next to the switch. Ignored when `children` is provided.
+- `size`: `'sm' | 'md' | 'lg'` (default: `'md'`). Controls the track and thumb dimensions.
+- `value`: `string` (default: `'on'`). The value attribute of the underlying checkbox input.
+- `variant`: `'default' | 'success' | 'warning' | 'danger'` (default: `'default'`). Color variant for the checked state.
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Variants Style mapping (checked state):
+- `default`: Track `bg-jam-text border-jam-text shadow-jam-hard-sm`, thumb `bg-jam-bg`
+- `success`: Track `bg-[#22c55e] border-[#22c55e] shadow-[6px_6px_0_rgba(34,197,94,0.3)]`, thumb `bg-jam-text`
+- `warning`: Track `bg-[#f59e0b] border-[#f59e0b] shadow-[6px_6px_0_rgba(245,158,11,0.3)]`, thumb `bg-jam-text`
+- `danger`: Track `bg-jam-danger border-jam-danger shadow-[6px_6px_0_rgba(232,17,35,0.35)]`, thumb `bg-jam-text`
+
+#### Unchecked state:
+- Track: `bg-jam-input border-jam-text/35 hover:border-jam-text/60`
+- Thumb: `bg-jam-text`
+
+#### Disabled state:
+- Track: `cursor-not-allowed border-jam-text/20 bg-jam-input/40 shadow-none`
+- Thumb: `bg-jam-text/35`
+- Label text: `text-jam-muted/45`
+- Description text: `text-jam-muted/35`
+
+#### Size classes:
+- Track: `sm` = `h-6 w-11`, `md` = `h-8 w-14`, `lg` = `h-10 w-[4.5rem]`
+- Thumb: `sm` = `h-4 w-4`, `md` = `h-6 w-6`, `lg` = `h-8 w-8`
+- Thumb translate (when checked): `sm` = `translate-x-5`, `md` = `translate-x-6`, `lg` = `translate-x-8`
+
+---
+
+## Examples
+
+### Basic Switch
+```svelte
+<script lang="ts">
+  import { Switch } from 'jamui';
+
+  let enabled = $state(false);
+</script>
+
+<Switch bind:checked={enabled} label="Enable notifications" />
+<p class="text-jam-text text-sm">Notifications: {enabled ? 'On' : 'Off'}</p>
+```
+
+### Switch with Description and Size
+```svelte
+<script lang="ts">
+  import { Switch } from 'jamui';
+
+  let darkMode = $state(true);
+</script>
+
+<Switch bind:checked={darkMode} label="Dark Mode" description="Use dark color theme" size="lg" />
+```
+
+### Switch with Children Snippet
+```svelte
+<script lang="ts">
+  import { Switch } from 'jamui';
+
+  let active = $state(false);
+</script>
+
+<Switch bind:checked={active} size="sm">
+  <span>Custom label content</span>
+</Switch>
+```
+
+### Disabled Variant Switches
+```svelte
+<script lang="ts">
+  import { Switch } from 'jamui';
+</script>
+
+<div class="flex flex-col gap-3">
+  <Switch disabled label="Disabled Off" variant="default" />
+  <Switch checked disabled label="Disabled On" variant="success" />
+  <Switch disabled label="Disabled Warning" variant="warning" />
+  <Switch disabled label="Disabled Danger" variant="danger" />
+</div>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `Space`: Toggle the switch on/off.
+  - `Enter`: Toggle the switch on/off.
+  - `Tab`: Moves focus to/from the switch.
+- **ARIA attributes managed**:
+  - `role="switch"`: Applied to the hidden `<input>` element.
+  - `aria-label`: Set to `"Switch"` when no text content (children, label, or description) is provided.
+  - `aria-disabled`: Set to `"true"` when the switch is disabled.
+  - Focus ring: `peer-focus-visible:ring-2 peer-focus-visible:ring-jam-text peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-jam-bg` applied via Tailwind peer utilities on the visual track.

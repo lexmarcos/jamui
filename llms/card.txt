@@ -1,0 +1,165 @@
+# JamUI — Card
+
+> A monospace, high-contrast, fully accessible card component for Svelte 5 (using Runes) and styled with Tailwind CSS.
+
+## Card API & Usage Guide
+
+The JamUI Card is a set of Svelte components that build a structured card layout. It uses Svelte 5 Runes (`$props`, `$derived`) and context-based state management to pass variant and size information from the root `Card` to its `CardHeader` and `CardFooter` children for consistent border styling. Each component renders semantic `<div>` elements with JamUI's sharp, mono aesthetic.
+
+### Component Structure
+
+- `Card`: Root container that provides card context (variant, size) to descendants.
+- `CardHeader`: Top section with a bottom border that adapts to the card variant.
+- `CardBody`: Main content area with standard padding.
+- `CardFooter`: Bottom section with a top border that adapts to the card variant.
+
+---
+
+## Components API
+
+### Card.svelte
+
+Root wrapper component. Sets card context for child components.
+
+#### Props
+- `children`: `Snippet` (optional). The card content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- `size`: `'sm' | 'md' | 'lg'` (default: `'md'`). Controls card sizing (reserved for future use).
+- `variant`: `'default' | 'filled' | 'bordered' | 'elevated'` (default: `'default'`). Visual style variant.
+- Plus all standard `HTMLAttributes<HTMLDivElement>` props.
+
+---
+
+### CardHeader.svelte
+
+Top section of the card. Renders a bottom border that adapts to the parent card's variant.
+
+#### Props
+- `children`: `Snippet` (optional). The header content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- Plus all standard `HTMLAttributes<HTMLDivElement>` props.
+
+---
+
+### CardBody.svelte
+
+Main content area of the card.
+
+#### Props
+- `children`: `Snippet` (optional). The body content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- Plus all standard `HTMLAttributes<HTMLDivElement>` props.
+
+---
+
+### CardFooter.svelte
+
+Bottom section of the card. Renders a top border that adapts to the parent card's variant.
+
+#### Props
+- `children`: `Snippet` (optional). The footer content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- Plus all standard `HTMLAttributes<HTMLDivElement>` props.
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Base class (Card root):
+`relative overflow-hidden rounded-none border font-jam-mono transition-shadow duration-150`
+
+#### Variant style mapping:
+- `default`: `border-jam-text/15 bg-jam-surface`
+- `filled`: `border-jam-bg/15 bg-jam-text text-jam-bg`
+- `bordered`: `border-jam-text/25 bg-transparent`
+- `elevated`: `border-jam-text/15 bg-jam-surface shadow-jam-hard-sm`
+
+#### CardHeader / CardFooter border behavior:
+- **default / bordered / elevated**: Header uses `border-b border-jam-text/10`, footer uses `border-t border-jam-text/10`.
+- **filled**: Header uses `border-b border-jam-bg/10`, footer uses `border-t border-jam-bg/10`.
+
+#### CardBody padding:
+- `px-4 py-4`
+
+---
+
+## Examples
+
+### Default Card
+```svelte
+<script lang="ts">
+  import { Card, CardHeader, CardBody, CardFooter } from 'jamui';
+</script>
+
+<Card>
+  <CardHeader>
+    <span class="text-sm font-bold">Card Title</span>
+  </CardHeader>
+  <CardBody>
+    <p class="text-xs text-jam-muted">Card body content goes here.</p>
+  </CardBody>
+  <CardFooter>
+    <span class="text-[10px] text-jam-muted">Footer info</span>
+  </CardFooter>
+</Card>
+```
+
+### Filled Card
+```svelte
+<script lang="ts">
+  import { Card, CardHeader, CardBody } from 'jamui';
+</script>
+
+<Card variant="filled">
+  <CardHeader>
+    <span class="text-sm font-bold">Filled Card</span>
+  </CardHeader>
+  <CardBody>
+    <p class="text-xs">This card uses the filled variant with inverted colors.</p>
+  </CardBody>
+</Card>
+```
+
+### Elevated Card
+```svelte
+<script lang="ts">
+  import { Card, CardBody } from 'jamui';
+</script>
+
+<Card variant="elevated">
+  <CardBody>
+    <p class="text-xs">An elevated card with a hard shadow.</p>
+  </CardBody>
+</Card>
+```
+
+### Custom class override
+```svelte
+<script lang="ts">
+  import { Card, CardBody } from 'jamui';
+</script>
+
+<Card class="max-w-md">
+  <CardBody>
+    <p class="text-xs">A card with a custom max-width class.</p>
+  </CardBody>
+</Card>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - Cards are not interactive by default. If interactive elements (buttons, links) are placed inside, they follow standard `Tab` navigation.
+- **ARIA attributes managed**:
+  - No ARIA attributes are automatically added. Cards are presentational containers. If the card represents a landmark or interactive region, add appropriate ARIA attributes via the spread props.

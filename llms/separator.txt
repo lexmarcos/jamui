@@ -1,0 +1,118 @@
+# JamUI — Separator
+
+> A monospace, high-contrast, fully accessible separator component for Svelte 5 (using Runes) and styled with Tailwind CSS.
+
+## Separator API & Usage Guide
+
+The JamUI Separator is a simple `<div>`-based visual divider that supports horizontal and vertical orientations, multiple visual variants (solid, dashed, dotted), and three sizes. It uses Svelte 5 Runes (`$props`, `$derived`) and manages ARIA attributes automatically based on the `decorative` prop.
+
+### Component Structure
+
+- `Separator`: A single self-contained component that renders a horizontal or vertical divider line.
+
+---
+
+## Components API
+
+### Separator.svelte
+
+A visual divider that separates content sections. Renders a `<div>` element with appropriate ARIA semantics.
+
+#### Props
+- `class`: `string` (default: `''`). Additional CSS classes to apply.
+- `decorative`: `boolean` (default: `false`). When `true`, the separator is purely decorative and removes ARIA semantics (`role`, `aria-orientation`, sets `aria-hidden="true"`).
+- `orientation`: `'horizontal' | 'vertical'` (default: `'horizontal'`). The axis along which the separator runs.
+- `size`: `'sm' | 'md' | 'lg'` (default: `'md'`). Controls the thickness of solid separators. `sm` = 1px, `md` = 2px, `lg` = 4px. Ignored for dashed/dotted variants.
+- `variant`: `'default' | 'muted' | 'strong' | 'dashed' | 'dotted'` (default: `'default'`). Visual style of the separator.
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Variants Style mapping:
+- `default`: `bg-jam-text/15` — subtle semi-transparent white line
+- `muted`: `bg-jam-text/8` — very faint divider
+- `strong`: `bg-jam-text/30` — prominent divider
+- `dashed`: `border-dashed border-jam-text/15` — dashed line (horizontal uses `border-t`, vertical uses `border-l`)
+- `dotted`: `border-dotted border-jam-text/15` — dotted line (horizontal uses `border-t`, vertical uses `border-l`)
+
+#### Orientation classes:
+- `horizontal`: `w-full shrink-0`
+- `vertical`: `h-full self-stretch shrink-0`
+
+#### Size classes (solid variants only):
+- `sm`: `h-px` (horizontal) / `w-px` (vertical)
+- `md`: `h-0.5` (horizontal) / `w-0.5` (vertical)
+- `lg`: `h-1` (horizontal) / `w-1` (vertical)
+
+---
+
+## Examples
+
+### Basic Horizontal Separator
+```svelte
+<script lang="ts">
+  import { Separator } from 'jamui';
+</script>
+
+<div class="flex flex-col gap-4">
+  <p class="text-jam-text text-sm">Content above</p>
+  <Separator />
+  <p class="text-jam-text text-sm">Content below</p>
+</div>
+```
+
+### Vertical Separator in a Row
+```svelte
+<script lang="ts">
+  import { Separator } from 'jamui';
+</script>
+
+<div class="flex items-center gap-4">
+  <span class="text-jam-text text-sm">Left</span>
+  <Separator orientation="vertical" size="lg" class="h-6" />
+  <span class="text-jam-text text-sm">Right</span>
+</div>
+```
+
+### Dashed Decorative Separator
+```svelte
+<script lang="ts">
+  import { Separator } from 'jamui';
+</script>
+
+<Separator variant="dashed" decorative />
+```
+
+### Strong Vertical Separator
+```svelte
+<script lang="ts">
+  import { Separator } from 'jamui';
+</script>
+
+<div class="flex h-24 items-center">
+  <span class="text-jam-text text-sm">Section A</span>
+  <Separator orientation="vertical" variant="strong" class="mx-4 h-full" />
+  <span class="text-jam-text text-sm">Section B</span>
+</div>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - The separator is a static visual element and does not receive keyboard focus or have interactive behavior.
+- **ARIA attributes managed**:
+  - `role="separator"`: Applied when `decorative` is `false`.
+  - `aria-orientation`: Set to the `orientation` value (`"horizontal"` or `"vertical"`) when `decorative` is `false`.
+  - `aria-hidden="true"`: Applied when `decorative` is `true` to hide the element from assistive technology.

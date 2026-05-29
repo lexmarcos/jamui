@@ -1,0 +1,172 @@
+# JamUI — Select
+
+> A monospace, high-contrast custom select dropdown with size variants, error states, and full keyboard navigation.
+
+## Select API & Usage Guide
+
+The JamUI Select is a set of Svelte 5 components that build a custom accessible select/combobox dropdown. It uses Svelte 5 Runes (`$state`, `$derived`, `$props`, `$bindable`, `$effect`, `tick`) and context-based state management. The select provides a trigger button that opens a listbox of options, with full keyboard navigation, type-ahead behavior, error/hint messaging, and three size variants.
+
+### Component Structure
+
+- `Select`: Root container that manages open state, selected value, option registration, and provides context to child options.
+- `SelectableOption`: Individual option within the dropdown listbox. Registers itself with the parent `Select` via context.
+
+---
+
+## Components API
+
+### Select.svelte
+
+Root wrapper component that manages the dropdown trigger, listbox, and state.
+
+#### Props
+- `children`: `Snippet` (optional). Content rendered inside the dropdown listbox (typically `SelectOption` components).
+- `class`: `string` (default: `''`). Additional CSS classes for the root container div.
+- `disabled`: `boolean` (default: `false`). Disables the select trigger, preventing it from opening.
+- `error`: `string` (default: `''`). Error message displayed below the select. When set, the trigger border and focus ring turn danger red.
+- `hint`: `string` (default: `''`). Hint message displayed below the select when there is no error.
+- `id`: `string` (optional). ID for the trigger element. Auto-generated if omitted.
+- `label`: `string` (default: `''`). Label text displayed above the select trigger.
+- `placeholder`: `string` (default: `'Selecione...'`). Placeholder text shown when no value is selected.
+- `size`: `'sm' | 'md' | 'lg'` (default: `'md'`). Controls the height and font size of the trigger button.
+- `value`: `string` (bindable, default: `''`). The currently selected value.
+- Inherits all standard HTML `<div>` attributes (except `class`).
+
+---
+
+### SelectOption.svelte
+
+Individual option within the dropdown listbox. Must be a child of `Select`.
+
+#### Props
+- `children`: `Snippet` (optional). Custom content rendered inside the option. If omitted, renders the `label` text.
+- `class`: `string` (default: `''`). Additional CSS classes for the option div.
+- `disabled`: `boolean` (default: `false`). Disables this specific option.
+- `label`: `string` (required). Display text for the option.
+- `value`: `string` (required). The value this option represents.
+- Inherits all standard HTML `<div>` attributes (except `class`, `onclick`, and `role`).
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Trigger size classes:
+- **sm**: `min-h-9 text-[10px] tracking-[0.06em]` — compact trigger.
+- **md**: `min-h-12 text-xs tracking-[0.06em]` — default trigger.
+- **lg**: `min-h-14 text-sm tracking-[0.06em]` — large trigger.
+
+#### Trigger base styling:
+- `relative flex w-full cursor-pointer items-center justify-between rounded-none border bg-jam-text px-4 outline-none transition-shadow duration-150 ease-out font-jam-mono font-bold text-jam-bg placeholder:text-jam-bg/30 hover:border-jam-bg/60 focus:border-jam-bg focus:shadow-[4px_4px_0_var(--color-jam-bg)] disabled:cursor-not-allowed disabled:border-jam-bg/15 disabled:bg-jam-text/40 disabled:text-jam-bg/30`.
+
+#### Trigger error state:
+- `border-jam-danger focus:border-jam-danger focus:shadow-[4px_4px_0_#e81123]`.
+
+#### Option state classes:
+- **Selected**: `bg-jam-bg text-jam-text` — highlighted with background.
+- **Active (keyboard focused)**: `bg-jam-bg text-jam-text` — same highlight as selected.
+- **Default**: `text-jam-bg hover:bg-jam-bg/10` — plain text with hover highlight.
+- **Disabled**: `cursor-not-allowed text-jam-bg/30` — faded, non-interactive.
+- **Option base**: `relative flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-xs font-bold font-jam-mono tracking-[0.06em] outline-none transition-colors duration-100`.
+
+#### Dropdown listbox:
+- `absolute left-0 top-full z-50 mt-1 min-w-full border border-jam-bg/15 bg-jam-text py-1 shadow-jam-hard-blue-sm`.
+
+#### Error message:
+- `text-[11px] font-bold uppercase tracking-[0.1em] text-jam-danger` with `aria-live="polite"`.
+
+#### Hint message:
+- `text-[11px] font-medium tracking-[0.08em] text-jam-soft/70`.
+
+---
+
+## Examples
+
+### Basic Select
+```svelte
+<script lang="ts">
+  import { Select, SelectOption } from 'jamui';
+
+  let selected = $state('');
+</script>
+
+<Select label="Country" placeholder="Select a country" bind:value={selected}>
+  <SelectOption value="br" label="Brazil" />
+  <SelectOption value="us" label="United States" />
+  <SelectOption value="de" label="Germany" />
+</Select>
+
+<p>Selected: {selected}</p>
+```
+
+### Select with Sizes and Error
+```svelte
+<script lang="ts">
+  import { Select, SelectOption } from 'jamui';
+
+  let selected = $state('');
+</script>
+
+<Select label="Small Select" size="sm" bind:value={selected}>
+  <SelectOption value="a" label="Alpha" />
+  <SelectOption value="b" label="Beta" />
+</Select>
+
+<Select label="Error Select" error="This field is required" bind:value={selected}>
+  <SelectOption value="x" label="X" />
+</Select>
+
+<Select label="With Hint" hint="Choose wisely" bind:value={selected}>
+  <SelectOption value="y" label="Y" />
+</Select>
+```
+
+### Select with Disabled Options
+```svelte
+<script lang="ts">
+  import { Select, SelectOption } from 'jamui';
+
+  let selected = $state('');
+</script>
+
+<Select label="Plan" bind:value={selected}>
+  <SelectOption value="free" label="Free" />
+  <SelectOption value="pro" label="Pro" />
+  <SelectOption value="enterprise" label="Enterprise" disabled />
+</Select>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `ArrowDown` / `Enter` / `Space` on trigger: Opens the dropdown and focuses the selected or first enabled option.
+  - `ArrowDown` in listbox: Moves focus to the next enabled option (wraps to first).
+  - `ArrowUp` in listbox: Moves focus to the previous enabled option (wraps to last).
+  - `Home` in listbox: Moves focus to the first enabled option.
+  - `End` in listbox: Moves focus to the last enabled option.
+  - `Enter` / `Space` in listbox: Selects the focused option and closes the dropdown.
+  - `Escape` in listbox: Closes the dropdown and returns focus to the trigger.
+  - `Tab` in listbox: Closes the dropdown and moves focus naturally.
+  - `ArrowDown` / `Enter` / `Space` on trigger when disabled: No action.
+- **ARIA attributes managed**:
+  - `role="combobox"` on the trigger button.
+  - `aria-expanded` reflects the open state on the trigger.
+  - `aria-haspopup="listbox"` on the trigger.
+  - `aria-controls` links the trigger to the listbox by ID.
+  - `aria-describedby` links the trigger to the hint/error message by ID.
+  - `aria-invalid` set to `"true"` when an error is present.
+  - `role="listbox"` on the dropdown container.
+  - `role="option"` on each `SelectOption`.
+  - `aria-selected` reflects whether the option is the current value.
+  - `tabindex="-1"` on options and the listbox for programmatic focus.
+  - `aria-live="polite"` on the error message for screen reader announcements.

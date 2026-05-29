@@ -1,0 +1,160 @@
+# JamUI — Dropdown
+
+> A monospace, high-contrast, fully accessible dropdown menu component for Svelte 5 (using Runes) and styled with Tailwind CSS.
+
+## Dropdown API & Usage Guide
+
+The JamUI Dropdown is a set of Svelte components that build an accessible dropdown menu. It uses Svelte 5 Runes (`$state`, `$derived`, `$props`, `$effect`, `tick`) and context-based state management. The Dropdown supports left/right alignment, keyboard navigation with arrow keys, item registration/deregistration via context, and full ARIA compliance. It renders via a trigger snippet pattern where the trigger element receives ARIA props from the parent.
+
+### Component Structure
+
+- `Dropdown`: Root container that manages open state, keyboard navigation, and renders the trigger and menu.
+- `DropdownItem`: Individual menu item with click handling and hover/focus states.
+- `DropdownSeparator`: Visual divider between menu item groups.
+
+---
+
+## Components API
+
+### Dropdown.svelte
+
+Root wrapper component. Manages open state, item registration, keyboard navigation, and renders the trigger and dropdown menu.
+
+#### Props
+- `children`: `Snippet` (optional). Child content (typically `DropdownItem` and `DropdownSeparator` components).
+- `trigger`: `Snippet<[DropdownTriggerProps]>` (required). A snippet that renders the trigger element. Receives ARIA props, event handlers, and a ref callback.
+- `class`: `string` (default: `''`). Additional CSS classes on the root wrapper.
+- `align`: `'start' | 'end'` (default: `'start'`). Horizontal alignment of the dropdown menu relative to the trigger.
+
+#### Alignment Classes
+- `start`: `left-0`
+- `end`: `right-0`
+
+---
+
+### DropdownItem.svelte
+
+Individual menu item button. Registers itself with the dropdown context for keyboard navigation.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- `disabled`: `boolean` (default: `false`). If `true`, the item is not focusable or clickable.
+- `onclick`: `(e: MouseEvent) => void` (optional). Click handler. The dropdown closes automatically when an item is clicked (unless `disabled`).
+- Plus all standard `HTMLAttributes<HTMLButtonElement>` (excluding `class`, `onclick`, `role`, and `tabindex`).
+
+---
+
+### DropdownSeparator.svelte
+
+Visual divider between groups of menu items.
+
+#### Props
+- `class`: `string` (default: `''`). Additional CSS classes.
+- Plus all standard `HTMLAttributes<HTMLDivElement>` (excluding `class`).
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Soft Accent Text**: `#bdbcff` (`text-jam-soft`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Component Default Styles:
+
+- **Dropdown Root**: `relative inline-block`
+- **Dropdown Menu**: `absolute z-50 mt-1.5 min-w-[12rem] border border-jam-bg/15 bg-jam-text py-1 shadow-jam-hard-blue-sm`
+- **DropdownItem (enabled)**: `relative flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-bold font-jam-mono tracking-[0.06em] text-jam-bg outline-none transition-colors duration-100 cursor-pointer hover:bg-jam-bg hover:text-jam-text focus:bg-jam-bg focus:text-jam-text`
+- **DropdownItem (disabled)**: `pointer-events-none cursor-not-allowed text-jam-bg/35`
+- **DropdownSeparator**: `my-1 h-px bg-jam-bg/10`
+
+---
+
+## Examples
+
+### Basic Dropdown Menu
+```svelte
+<script lang="ts">
+  import { Dropdown, DropdownItem, DropdownSeparator } from 'jamui';
+</script>
+
+<Dropdown>
+  {#snippet trigger(props)}
+    <button {...props} class="bg-jam-text text-jam-bg px-4 py-2 font-bold uppercase">Options</button>
+  {/snippet}
+  <DropdownItem>Edit</DropdownItem>
+  <DropdownItem>Duplicate</DropdownItem>
+  <DropdownSeparator />
+  <DropdownItem>Delete</DropdownItem>
+</Dropdown>
+```
+
+### End-Aligned Dropdown with Disabled Item
+```svelte
+<script lang="ts">
+  import { Dropdown, DropdownItem, DropdownSeparator } from 'jamui';
+</script>
+
+<Dropdown align="end">
+  {#snippet trigger(props)}
+    <button {...props} class="bg-jam-text text-jam-bg px-4 py-2 font-bold uppercase">Menu</button>
+  {/snippet}
+  <DropdownItem>Profile</DropdownItem>
+  <DropdownItem disabled>Settings (unavailable)</DropdownItem>
+  <DropdownSeparator />
+  <DropdownItem>Sign Out</DropdownItem>
+</Dropdown>
+```
+
+### Dropdown with Custom Click Handler
+```svelte
+<script lang="ts">
+  import { Dropdown, DropdownItem } from 'jamui';
+
+  function handleCopy() {
+    navigator.clipboard.writeText('Hello, JamUI!');
+  }
+
+  function handleCut() {
+    navigator.clipboard.writeText('Cut content');
+  }
+</script>
+
+<Dropdown>
+  {#snippet trigger(props)}
+    <button {...props} class="bg-jam-text text-jam-bg px-4 py-2 font-bold uppercase">Clipboard</button>
+  {/snippet}
+  <DropdownItem onclick={handleCopy}>Copy</DropdownItem>
+  <DropdownItem onclick={handleCut}>Cut</DropdownItem>
+  <DropdownSeparator />
+  <DropdownItem>Paste</DropdownItem>
+</Dropdown>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `ArrowDown`: Moves focus to the next enabled item. Wraps to the first enabled item when at the end.
+  - `ArrowUp`: Moves focus to the previous enabled item. Wraps to the last enabled item when at the beginning.
+  - `Home`: Moves focus to the first enabled item.
+  - `End`: Moves focus to the last enabled item.
+  - `Enter` / `Space` on trigger: Opens the dropdown menu.
+  - `Escape`: Closes the dropdown and returns focus to the trigger.
+  - `Tab`: Closes the dropdown.
+- **ARIA attributes managed**:
+  - `role="menu"` on the dropdown menu container.
+  - `role="menuitem"` on each `DropdownItem`.
+  - `role="separator"` on the `DropdownSeparator`.
+  - `aria-haspopup="menu"` on the trigger element.
+  - `aria-expanded` on the trigger element (reflects open state).
+- **Focus management**: On open, focus moves to the first enabled item. On close, focus returns to the trigger element.
+- **Mouse interaction**: Hovering over items moves keyboard focus. Clicking outside the dropdown closes it.

@@ -1,0 +1,129 @@
+# JamUI — Alert
+
+> A high-contrast, dismissible alert banner component with semantic status variants and a vertical status bar.
+
+## Alert API & Usage Guide
+
+The JamUI Alert is a self-contained Svelte 5 component for displaying important messages to users. It features four semantic variants (`info`, `success`, `warning`, `danger`), each with a distinct colored status bar and icon. The alert supports dismissibility with a bindable `visible` prop, custom children or built-in title/description rendering, and follows the JamUI high-contrast, mono-font aesthetic. Uses `$state`, `$derived`, `$props`, and `$bindable` runes.
+
+### Component Structure
+
+- `Alert`: The root alert container that renders a status bar, icon, content area, and optional dismiss button.
+
+---
+
+## Components API
+
+### Alert.svelte
+
+The main alert component. Renders a full-width banner with a left-side colored status bar, an icon, content, and an optional dismiss button.
+
+#### Props
+- `variant`: `'info' | 'success' | 'warning' | 'danger'` (default: `'info'`). Semantic variant that controls the status bar color, icon, and icon color.
+- `title`: `string` (default: `''`). Optional title text displayed in bold uppercase.
+- `description`: `string` (default: `''`). Optional description text displayed below the title.
+- `dismissible`: `boolean` (default: `false`). If `true`, renders a dismiss button (X icon) in the top-right corner.
+- `visible`: `boolean` (bindable, default: `true`). Controls visibility. Set to `false` to hide the alert.
+- `ondismiss`: `() => void`. Callback fired when the dismiss button is clicked.
+- `children`: `Snippet`. Custom content. When provided, replaces the title and description.
+- `class`: `string` (default: `''`). Additional CSS classes merged with the base styles.
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Variant Status Bar Colors:
+- `info`: `bg-[#00b7c3]`
+- `success`: `bg-[#22c55e]`
+- `warning`: `bg-[#f59e0b]`
+- `danger`: `bg-jam-danger`
+
+#### Variant Icon Colors:
+- `info`: `text-[#00b7c3]`
+- `success`: `text-[#22c55e]`
+- `warning`: `text-[#f59e0b]`
+- `danger`: `text-jam-danger`
+
+#### Variant Icons:
+- `info`: `Info` (lucide)
+- `success`: `CircleCheck` (lucide)
+- `warning`: `AlertTriangle` (lucide)
+- `danger`: `CircleX` (lucide)
+
+#### Base Styles:
+- Container: `relative flex items-start gap-3 border border-jam-bg/15 bg-jam-text p-4 font-jam-mono text-jam-bg shadow-jam-hard-blue-sm`
+- Status bar: `absolute left-0 top-0 h-full w-1.5` + variant color
+- Title: `text-[11px] font-black uppercase tracking-[0.18em] text-jam-bg`
+- Description: `text-xs font-medium leading-relaxed text-jam-bg/75`
+- Dismiss button: Square, border, transparent background, hover states with `focus-visible:ring`
+
+---
+
+## Examples
+
+### Basic Info Alert with title and description
+```svelte
+<script lang="ts">
+  import { Alert } from 'jamui';
+</script>
+
+<Alert variant="info" title="Notice" description="Your session will expire in 5 minutes." />
+```
+
+### Dismissible Warning Alert with children
+```svelte
+<script lang="ts">
+  import { Alert } from 'jamui';
+
+  let showAlert = $state(true);
+</script>
+
+{#if showAlert}
+  <Alert
+    variant="warning"
+    dismissible
+    bind:visible={showAlert}
+    ondismiss={() => console.log('Alert dismissed')}
+  >
+    <p class="text-[11px] font-black uppercase tracking-[0.18em] text-jam-bg">Warning</p>
+    <p class="text-xs font-medium leading-relaxed text-jam-bg/75">
+      Your storage is almost full. Please free up space.
+    </p>
+  </Alert>
+{/if}
+```
+
+### Danger Alert for critical errors
+```svelte
+<script lang="ts">
+  import { Alert } from 'jamui';
+</script>
+
+<Alert
+  variant="danger"
+  title="Deployment Failed"
+  description="The build process encountered errors. Check logs for details."
+/>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `Tab`: Moves focus to the dismiss button (if visible).
+  - `Enter` / `Space`: Activates the dismiss button.
+- **ARIA attributes managed**:
+  - `role="alert"` on the container for screen reader announcement.
+  - `aria-label="Dismiss"` on the dismiss button.
+  - `aria-hidden="true"` on the icon (decorative).
+  - `focus-visible:ring` ring on dismiss button for keyboard focus visibility.

@@ -1,0 +1,204 @@
+# JamUI — Breadcrumb
+
+> A monospace, high-contrast, fully accessible breadcrumb navigation component for Svelte 5 (using Runes) and styled with Tailwind CSS.
+
+## Breadcrumb API & Usage Guide
+
+The JamUI Breadcrumb is a set of Svelte components that build a semantic breadcrumb navigation. It uses Svelte 5 Runes (`$props`) and context-based state management to share separator configuration across child components. Each component renders semantic HTML (`<nav>`, `<ol>`, `<li>`, `<a>`, `<span>`) for maximum accessibility.
+
+### Component Structure
+
+- `Breadcrumb`: Root container (`<nav>`) that holds the breadcrumb context and provides a custom separator to all descendants.
+- `BreadcrumbList`: Ordered list (`<ol>`) that arranges breadcrumb items horizontally.
+- `BreadcrumbItem`: List item (`<li>`) wrapping a single breadcrumb entry.
+- `BreadcrumbLink`: The clickable link (`<a>`) or current page indicator (`<span>`) for a breadcrumb step.
+- `BreadcrumbSeparator`: Visual separator between items (default: `ChevronRight` icon, or custom via context).
+- `BreadcrumbEllipsis`: A button representing collapsed/omitted breadcrumb segments.
+
+---
+
+## Components API
+
+### Breadcrumb.svelte
+
+Root nav wrapper. Provides separator context to all descendant separators.
+
+#### Props
+- `children`: `Snippet` (optional). The breadcrumb content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- `separator`: `Snippet` (optional). Custom separator snippet provided to all `BreadcrumbSeparator` descendants via context.
+- Plus all standard `HTMLAttributes<HTMLElement>` props (spread onto `<nav>`).
+
+---
+
+### BreadcrumbList.svelte
+
+Horizontal ordered list for breadcrumb items.
+
+#### Props
+- `children`: `Snippet` (optional). The list items.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- Plus all standard `HTMLAttributes<HTMLOListElement>` props.
+
+---
+
+### BreadcrumbItem.svelte
+
+Single list item wrapper.
+
+#### Props
+- `children`: `Snippet` (optional). The item content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- Plus all standard `HTMLAttributes<HTMLLIElement>` props.
+
+---
+
+### BreadcrumbLink.svelte
+
+Renders either a clickable `<a>` link or a current-page `<span>` indicator.
+
+#### Props
+- `children`: `Snippet` (optional). The link label content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- `current`: `boolean` (default: `false`). If `true`, renders a `<span>` with `aria-current="page"` instead of an `<a>` link. The current item is visually distinct and non-interactive.
+- Plus all standard `HTMLAnchorAttributes` props (spread onto `<a>` when not current).
+
+---
+
+### BreadcrumbSeparator.svelte
+
+Visual separator between breadcrumb items. Uses context to optionally render a custom separator from the `Breadcrumb` parent, or defaults to a `ChevronRight` icon.
+
+#### Props
+- `children`: `Snippet` (optional). Custom separator content override.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- Plus all standard `HTMLAttributes<HTMLSpanElement>` props.
+
+---
+
+### BreadcrumbEllipsis.svelte
+
+A button representing collapsed/omitted breadcrumb segments. Renders an `Ellipsis` icon by default.
+
+#### Props
+- `children`: `Snippet` (optional). Custom content to replace the default ellipsis icon.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- Plus all standard `HTMLButtonAttributes` props.
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Variants Style mapping:
+- **BreadcrumbRoot**: Applies `font-jam-mono` to the `<nav>`.
+- **BreadcrumbList**: `flex flex-wrap items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em]`
+- **BreadcrumbItem**: `inline-flex items-center gap-1.5`
+- **BreadcrumbLink (interactive)**: `text-jam-muted hover:text-jam-text` with `transition-colors duration-100`.
+- **BreadcrumbLink (current)**: `text-jam-text pointer-events-none` with `aria-current="page"`.
+- **BreadcrumbSeparator**: `text-jam-muted/50`
+- **BreadcrumbEllipsis**: `grid h-5 w-5 place-items-center text-jam-muted hover:text-jam-text` with focus ring.
+
+---
+
+## Examples
+
+### Basic Breadcrumb
+```svelte
+<script lang="ts">
+  import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator } from 'jamui';
+</script>
+
+<Breadcrumb>
+  <BreadcrumbList>
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/">Home</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/docs">Docs</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbLink current>Current Page</BreadcrumbLink>
+    </BreadcrumbItem>
+  </BreadcrumbList>
+</Breadcrumb>
+```
+
+### Breadcrumb with Ellipsis (collapsed segments)
+```svelte
+<script lang="ts">
+  import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbEllipsis } from 'jamui';
+</script>
+
+<Breadcrumb>
+  <BreadcrumbList>
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/">Home</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbEllipsis />
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/docs/advanced">Advanced</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbLink current>Current</BreadcrumbLink>
+    </BreadcrumbItem>
+  </BreadcrumbList>
+</Breadcrumb>
+```
+
+### Breadcrumb with Custom Separator
+```svelte
+<script lang="ts">
+  import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator } from 'jamui';
+  import ArrowRight from 'lucide-svelte/icons/arrow-right';
+</script>
+
+{#snippet customSep()}
+  <ArrowRight size={12} />
+{/snippet}
+
+<Breadcrumb separator={customSep}>
+  <BreadcrumbList>
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/">Home</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/products">Products</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbLink current>Widget</BreadcrumbLink>
+    </BreadcrumbItem>
+  </BreadcrumbList>
+</Breadcrumb>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `Tab`: Moves focus between interactive breadcrumb links and the ellipsis button.
+  - `Enter` / `Space`: Activates focused breadcrumb link or ellipsis button.
+- **ARIA attributes managed**:
+  - `aria-label="Breadcrumb"` on the root `<nav>`.
+  - `aria-current="page"` on the current (last) breadcrumb link rendered as `<span>`.
+  - `aria-hidden="true"` on separator spans (decorative, not interactive).
+  - `role="presentation"` on separator spans.
+  - `aria-label="More breadcrumbs"` on the ellipsis button.

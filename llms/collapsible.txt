@@ -1,0 +1,159 @@
+# JamUI — Collapsible
+
+> A monospace, high-contrast, fully accessible collapsible component for Svelte 5 (using Runes) and styled with Tailwind CSS.
+
+## Collapsible API & Usage Guide
+
+The JamUI Collapsible is a set of Svelte components that build an accessible collapsible section. It uses Svelte 5 Runes (`$props`, `$state`, `$derived`, `$effect`, `$bindable`) and context-based state management to coordinate open/close state between the trigger and panel. The panel uses a smooth height and opacity transition animated via CSS `style` bindings. Three visual variants are supported: `default`, `ghost`, and `bordered`.
+
+### Component Structure
+
+- `Collapsible`: Root container that holds open/close state and provides context to descendants.
+- `CollapsibleTrigger`: Button that toggles the collapsible panel open/closed. Includes a chevron icon that rotates on open.
+- `CollapsiblePanel`: The expandable/collapsible content panel with animated height transition.
+
+---
+
+## Components API
+
+### Collapsible.svelte
+
+Root wrapper component. Manages open state and provides toggle function and panel ID to children via context.
+
+#### Props
+- `children`: `Snippet` (optional). The collapsible content (trigger + panel).
+- `class`: `string` (default: `''`). Additional CSS classes.
+- `open`: `boolean` (bindable, default: `false`). Controls the open/close state. Can be bound with `bind:open`.
+- `variant`: `'default' | 'ghost' | 'bordered'` (default: `'default'`). Visual style variant for the trigger.
+- Plus all standard `HTMLAttributes<HTMLDivElement>` props.
+
+---
+
+### CollapsibleTrigger.svelte
+
+Toggle button that controls the collapsible panel. Must be a child of `Collapsible`.
+
+#### Props
+- `children`: `Snippet` (optional). Custom trigger label content. If omitted, no text label is rendered (only the chevron icon).
+- `class`: `string` (default: `''`). Additional CSS classes.
+- Plus all standard `HTMLButtonAttributes` props (excluding `onclick`, `aria-expanded`, `aria-controls` which are managed internally).
+
+---
+
+### CollapsiblePanel.svelte
+
+Expandable content panel. Must be a child of `Collapsible`.
+
+#### Props
+- `children`: `Snippet` (optional). The panel content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- Plus all standard `HTMLAttributes<HTMLDivElement>` props (excluding `role` which is set to `"region"`).
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Trigger base class:
+`group flex w-full cursor-pointer select-none items-center justify-between font-black uppercase outline-none transition-all duration-150 ease-out focus-visible:ring-2 focus-visible:ring-jam-text focus-visible:ring-offset-2 focus-visible:ring-offset-jam-bg`
+
+#### Trigger variant styles:
+- `ghost`: `min-h-9 px-0 text-xs tracking-[0.18em] text-jam-text hover:text-jam-muted bg-transparent border-0`
+- `bordered`: `min-h-10 px-3 text-xs tracking-[0.18em] text-jam-text border border-jam-text/25 bg-transparent hover:bg-jam-text/5 hover:border-jam-text/40`
+- `default`: `min-h-10 px-3 text-xs tracking-[0.18em] text-jam-text border border-jam-text/15 bg-jam-surface hover:border-jam-text/30 hover:bg-jam-surface-strong`
+
+#### Chevron icon:
+- `ChevronDown` (Lucide) at `size={14}` with `text-jam-muted`.
+- Rotates 180 degrees when open: `transition-transform duration-150 {isOpen ? 'rotate-180' : ''}`.
+
+#### Panel:
+- `overflow-hidden transition-[height,opacity] duration-300 ease-out`
+- Animated via inline `style` binding: `height: {isOpen ? contentHeight + 'px' : '0px'}; opacity: {isOpen ? 1 : 0};`
+- Inner content wrapper: `px-3 pb-3 pt-1`
+
+---
+
+## Examples
+
+### Basic Collapsible
+```svelte
+<script lang="ts">
+  import { Collapsible, CollapsibleTrigger, CollapsiblePanel } from 'jamui';
+</script>
+
+<Collapsible>
+  <CollapsibleTrigger>Show details</CollapsibleTrigger>
+  <CollapsiblePanel>
+    <p class="text-xs">Here is the hidden content that expands and collapses.</p>
+  </CollapsiblePanel>
+</Collapsible>
+```
+
+### Controlled Collapsible with binding
+```svelte
+<script lang="ts">
+  import { Collapsible, CollapsibleTrigger, CollapsiblePanel } from 'jamui';
+
+  let isOpen = $state(false);
+</script>
+
+<button onclick={() => isOpen = !isOpen} class="text-xs text-jam-muted">
+  Toggle from outside: {isOpen ? 'Open' : 'Closed'}
+</button>
+
+<Collapsible bind:open={isOpen}>
+  <CollapsibleTrigger>Panel</CollapsibleTrigger>
+  <CollapsiblePanel>
+    <p class="text-xs">This panel is controlled externally.</p>
+  </CollapsiblePanel>
+</Collapsible>
+```
+
+### Ghost Variant
+```svelte
+<script lang="ts">
+  import { Collapsible, CollapsibleTrigger, CollapsiblePanel } from 'jamui';
+</script>
+
+<Collapsible variant="ghost">
+  <CollapsibleTrigger>Ghost trigger</CollapsibleTrigger>
+  <CollapsiblePanel>
+    <p class="text-xs">Content in ghost variant with no borders or background.</p>
+  </CollapsiblePanel>
+</Collapsible>
+```
+
+### Bordered Variant
+```svelte
+<script lang="ts">
+  import { Collapsible, CollapsibleTrigger, CollapsiblePanel } from 'jamui';
+</script>
+
+<Collapsible variant="bordered">
+  <CollapsibleTrigger>Bordered trigger</CollapsibleTrigger>
+  <CollapsiblePanel>
+    <p class="text-xs">Content in bordered variant with visible border.</p>
+  </CollapsiblePanel>
+</Collapsible>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `Tab`: Moves focus to/from the trigger button.
+  - `Enter` / `Space`: Toggles the collapsible panel open/closed.
+- **ARIA attributes managed**:
+  - `aria-expanded="true|false"` on the trigger button reflects the open state.
+  - `aria-controls` on the trigger references the panel's `id`.
+  - `role="region"` on the collapsible panel for semantic meaning.
+  - Panel `id` is auto-generated (`collapsible-panel-{random}`) and shared via context.

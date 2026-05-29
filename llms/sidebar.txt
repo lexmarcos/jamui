@@ -1,0 +1,501 @@
+# JamUI — Sidebar
+
+> A monospace, high-contrast, fully accessible sidebar navigation system for Svelte 5 (using Runes) and styled with Tailwind CSS.
+
+## Sidebar API & Usage Guide
+
+The JamUI Sidebar is a comprehensive navigation layout system built with Svelte 5 Runes (`$props`, `$state`, `$derived`, `$effect`, `$bindable`) and context-based state management. It provides a provider/panel architecture with desktop and mobile modes, collapsible states, and a full set of sub-components for building complex navigation menus. The system supports left/right placement, three visual variants, three collapse strategies, and localStorage persistence.
+
+### Component Structure
+
+- `SidebarProvider`: Root context provider that manages open/closed state, mobile detection, keyboard shortcuts, and CSS custom properties.
+- `Sidebar`: The main sidebar panel. Must be inside `SidebarProvider`.
+- `SidebarTrigger`: Button that toggles the sidebar open/closed.
+- `SidebarRail`: A thin hit-target strip for toggling the sidebar by clicking its edge.
+- `SidebarInset`: Main content area that sits alongside the sidebar.
+- `SidebarContent`: Scrollable content container inside the sidebar.
+- `SidebarHeader`: Header section at the top of the sidebar.
+- `SidebarFooter`: Footer section at the bottom of the sidebar.
+- `SidebarGroup`: Wraps a group of related menu items.
+- `SidebarGroupLabel`: Label/heading for a group.
+- `SidebarGroupContent`: Container for the content within a group.
+- `SidebarMenu`: Unordered list (`<ul>`) that holds menu items.
+- `SidebarMenuItem`: List item (`<li>`) wrapper for a single menu entry.
+- `SidebarMenuButton`: Polymorphic button/link for a menu item. Supports icon, badge, shortcut hint, and submenu indicator.
+- `SidebarMenuSub`: Nested sub-menu list.
+- `SidebarMenuSubItem`: List item within a sub-menu.
+- `SidebarMenuSubButton`: Button/link within a sub-menu.
+- `SidebarSeparator`: Horizontal rule divider within the sidebar.
+
+---
+
+## Components API
+
+### SidebarProvider.svelte
+
+Root provider that manages sidebar state and provides context to all child components.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- `open`: `boolean` (optional). Controlled desktop open state. When provided, the component is controlled.
+- `defaultOpen`: `boolean` (default: `true`). Initial desktop open state when uncontrolled.
+- `onOpenChange`: `(open: boolean) => void` (optional). Callback when desktop open state changes.
+- `openMobile`: `boolean` (optional). Controlled mobile open state.
+- `defaultOpenMobile`: `boolean` (default: `false`). Initial mobile open state when uncontrolled.
+- `onOpenMobileChange`: `(open: boolean) => void` (optional). Callback when mobile open state changes.
+- `persistKey`: `string` (optional). localStorage key for persisting desktop state.
+- `disableKeyboardShortcut`: `boolean` (default: `false`). Disables the Ctrl/Cmd+B keyboard shortcut.
+- `widthExpanded`: `string` (default: `'16rem'`). CSS width when sidebar is expanded.
+- `widthCollapsed`: `string` (default: `'3.25rem'`). CSS width in `collapsible="icon"` mode.
+- `widthMobile`: `string` (default: `'18rem'`). CSS width of the mobile sheet.
+- `mobileBreakpoint`: `number` (default: `768`). Viewport width in pixels below which mobile mode activates.
+
+---
+
+### Sidebar.svelte
+
+The main sidebar panel. Renders differently for desktop (fixed position) and mobile (slide-in sheet with overlay).
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- `side`: `'left' | 'right'` (default: `'left'`). Which edge of the viewport the sidebar sticks to.
+- `variant`: `'sidebar' | 'floating' | 'inset'` (default: `'sidebar'`). Visual layout variant.
+- `collapsible`: `'offcanvas' | 'icon' | 'none'` (default: `'offcanvas'`). Collapse strategy.
+- `aria-label`: `string` (default: `'Sidebar'`). Accessible label for the panel.
+
+---
+
+### SidebarTrigger.svelte
+
+Button that toggles the sidebar open/closed.
+
+#### Props
+- `children`: `Snippet` (optional). Custom trigger content. Defaults to `PanelLeft`/`PanelRight` icon based on `side`.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### SidebarRail.svelte
+
+A thin invisible hit-target strip positioned at the sidebar edge for toggling.
+
+#### Props
+- `class`: `string` (default: `''`). Additional CSS classes.
+- `aria-label`: `string` (default: `'Toggle sidebar'`). Accessible label.
+
+---
+
+### SidebarInset.svelte
+
+Main content area that sits alongside the sidebar. Renders as a `<main>` element.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### SidebarContent.svelte
+
+Scrollable content container inside the sidebar.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### SidebarHeader.svelte
+
+Header section at the top of the sidebar. Includes a bottom border and adapts padding in icon-only mode.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### SidebarFooter.svelte
+
+Footer section at the bottom of the sidebar. Includes a top border and adapts padding in icon-only mode.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### SidebarGroup.svelte
+
+Wraps a group of related menu items within the sidebar.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### SidebarGroupLabel.svelte
+
+Label/heading for a sidebar group. Hidden when the sidebar is in icon-only mode.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### SidebarGroupContent.svelte
+
+Container for the content within a sidebar group.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### SidebarMenu.svelte
+
+Unordered list (`<ul>`) that holds menu items.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### SidebarMenuItem.svelte
+
+List item (`<li>`) wrapper for a single menu entry.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### SidebarMenuButton.svelte
+
+Polymorphic button/link for a menu item. Renders an `<a>` when `href` is provided, otherwise a `<button>`.
+
+#### Props
+- `children`: `Snippet` (optional). Button/link label content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- `active`: `boolean` (default: `false`). Highlights the item as the current navigation target.
+- `disabled`: `boolean` (default: `false`). Disables the item (`aria-disabled` + visually muted).
+- `icon`: `Snippet` (optional). Leading icon snippet rendered before children.
+- `badge`: `Snippet` (optional). Trailing badge snippet rendered after children.
+- `shortcut`: `string` (optional). Trailing keyboard shortcut hint (e.g., `"⌘ K"`).
+- `size`: `'sm' | 'md' | 'lg'` (default: `'md'`). Visual density. `sm` = `h-7`, `md` = `h-9`, `lg` = `h-11`.
+- `hasSub`: `boolean` (default: `false`). When `true`, shows a chevron indicator for submenus.
+- `href`: `string` (optional). When provided, renders as an anchor element.
+
+---
+
+### SidebarMenuSub.svelte
+
+Nested sub-menu list (`<ul>`). Hidden in icon-only mode. Has a left border indent.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### SidebarMenuSubItem.svelte
+
+List item within a sub-menu.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### SidebarMenuSubButton.svelte
+
+Button/link within a sub-menu. Polymorphic like `SidebarMenuButton` (renders `<a>` or `<button>`). Uses smaller sizing than the parent menu button.
+
+#### Props
+- `children`: `Snippet` (optional). Button/link label content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- `active`: `boolean` (default: `false`). Highlights as current item.
+- `disabled`: `boolean` (default: `false`). Disables the item.
+- `icon`: `Snippet` (optional). Leading icon snippet.
+- `badge`: `Snippet` (optional). Trailing badge snippet.
+- `shortcut`: `string` (optional). Keyboard shortcut hint.
+- `size`: `'sm' | 'md' | 'lg'` (default: `'md'`). Visual density. `sm` = `h-6`, `md` = `h-7`, `lg` = `h-8`.
+- `href`: `string` (optional). When provided, renders as an anchor element.
+
+---
+
+### SidebarSeparator.svelte
+
+Horizontal rule divider within the sidebar.
+
+#### Props
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### CSS Custom Properties:
+- `--jam-sidebar-width`: Width when expanded (default `16rem`)
+- `--jam-sidebar-width-icon`: Width in icon-only mode (default `3.25rem`)
+- `--jam-sidebar-width-mobile`: Width of mobile sheet (default `18rem`)
+
+#### Sidebar Variants:
+- `sidebar`: Default fixed sidebar with border on the opposite edge.
+- `floating`: Bordered panel with `shadow-jam-hard-md`, no edge border.
+- `inset`: No fixed positioning; rendered as a flex item with border and shadow.
+
+#### Sidebar Collapsible modes:
+- `offcanvas`: Collapses to `w-0` and translates off-screen when collapsed.
+- `icon`: Collapses to `--jam-sidebar-width-icon` width. Labels hidden, icons remain.
+- `none`: Always expanded, no collapse behavior.
+
+#### SidebarMenuButton states:
+- Default: `text-jam-text hover:bg-jam-text/10 hover:text-jam-text active:bg-jam-text/15`
+- Active: `bg-jam-text text-jam-bg shadow-[inset_3px_0_0_0_var(--color-jam-text)]`
+- Disabled: `cursor-not-allowed text-jam-text/30 hover:bg-transparent`
+- Icon-only mode: Square `size-9`, centered, no padding.
+
+#### SidebarMenuSubButton states:
+- Default: `text-jam-soft hover:bg-jam-text/[0.07] hover:text-jam-text active:bg-jam-text/15`
+- Active: `bg-jam-text/10 text-jam-text shadow-[inset_2px_0_0_0_var(--color-jam-text)]`
+- Disabled: `cursor-not-allowed text-jam-text/25 hover:bg-transparent`
+
+---
+
+## Examples
+
+### Basic Sidebar Layout
+```svelte
+<script lang="ts">
+  import {
+    SidebarProvider,
+    Sidebar,
+    SidebarTrigger,
+    SidebarContent,
+    SidebarHeader,
+    SidebarFooter,
+    SidebarMenu,
+    SidebarMenuItem,
+    SidebarMenuButton,
+    SidebarInset
+  } from 'jamui';
+  import Home from 'lucide-svelte/icons/home';
+  import Settings from 'lucide-svelte/icons/settings';
+</script>
+
+<SidebarProvider>
+  <Sidebar>
+    <SidebarHeader>
+      <span class="text-jam-text text-sm font-bold">My App</span>
+    </SidebarHeader>
+    <SidebarContent>
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton href="/" active>
+            <Home size={16} />
+            Home
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton href="/settings">
+            <Settings size={16} />
+            Settings
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    </SidebarContent>
+    <SidebarFooter>
+      <span class="text-jam-muted text-[10px] uppercase">v1.0</span>
+    </SidebarFooter>
+  </Sidebar>
+  <SidebarInset>
+    <header class="flex items-center gap-2 border-b border-jam-text/15 px-4 py-2">
+      <SidebarTrigger />
+      <span class="text-jam-text text-sm font-bold">Dashboard</span>
+    </header>
+    <div class="p-4">
+      <p class="text-jam-text">Main content goes here.</p>
+    </div>
+  </SidebarInset>
+</SidebarProvider>
+```
+
+### Sidebar with Groups and Shortcuts
+```svelte
+<script lang="ts">
+  import {
+    SidebarProvider,
+    Sidebar,
+    SidebarContent,
+    SidebarGroup,
+    SidebarGroupLabel,
+    SidebarGroupContent,
+    SidebarMenu,
+    SidebarMenuItem,
+    SidebarMenuButton,
+    SidebarSeparator,
+    SidebarInset,
+    SidebarTrigger
+  } from 'jamui';
+  import Search from 'lucide-svelte/icons/search';
+  import Inbox from 'lucide-svelte/icons/inbox';
+  import Calendar from 'lucide-svelte/icons/calendar';
+  import Users from 'lucide-svelte/icons/users';
+</script>
+
+<SidebarProvider>
+  <Sidebar>
+    <SidebarContent>
+      <SidebarGroup>
+        <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+        <SidebarGroupContent>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton href="/search" shortcut="⌘ K">
+                <Search size={16} />
+                Search
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton href="/inbox">
+                <Inbox size={16} />
+                Inbox
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
+      <SidebarSeparator />
+      <SidebarGroup>
+        <SidebarGroupLabel>Tools</SidebarGroupLabel>
+        <SidebarGroupContent>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton href="/calendar">
+                <Calendar size={16} />
+                Calendar
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton href="/team">
+                <Users size={16} />
+                Team
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
+    </SidebarContent>
+  </Sidebar>
+  <SidebarInset>
+    <SidebarTrigger />
+  </SidebarInset>
+</SidebarProvider>
+```
+
+### Sidebar with Sub-Menu
+```svelte
+<script lang="ts">
+  import {
+    SidebarProvider,
+    Sidebar,
+    SidebarContent,
+    SidebarMenu,
+    SidebarMenuItem,
+    SidebarMenuButton,
+    SidebarMenuSub,
+    SidebarMenuSubItem,
+    SidebarMenuSubButton,
+    SidebarInset,
+    SidebarTrigger
+  } from 'jamui';
+  import File from 'lucide-svelte/icons/file';
+</script>
+
+<SidebarProvider>
+  <Sidebar>
+    <SidebarContent>
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton hasSub>
+            <File size={16} />
+            Documents
+          </SidebarMenuButton>
+          <SidebarMenuSub>
+            <SidebarMenuSubItem>
+              <SidebarMenuSubButton href="/docs/readme" active>
+                README.md
+              </SidebarMenuSubButton>
+            </SidebarMenuSubItem>
+            <SidebarMenuSubItem>
+              <SidebarMenuSubButton href="/docs/changelog">
+                CHANGELOG.md
+              </SidebarMenuSubButton>
+            </SidebarMenuSubItem>
+          </SidebarMenuSub>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    </SidebarContent>
+  </Sidebar>
+  <SidebarInset>
+    <SidebarTrigger />
+  </SidebarInset>
+</SidebarProvider>
+```
+
+### Floating Variant with Right Side
+```svelte
+<script lang="ts">
+  import { SidebarProvider, Sidebar, SidebarInset, SidebarTrigger } from 'jamui';
+</script>
+
+<SidebarProvider>
+  <Sidebar side="right" variant="floating" collapsible="icon">
+    <div class="p-4 text-jam-text text-sm">
+      Floating sidebar content
+    </div>
+  </Sidebar>
+  <SidebarInset>
+    <SidebarTrigger />
+    <div class="p-4">
+      <p class="text-jam-text">Content area with floating sidebar on the right.</p>
+    </div>
+  </SidebarInset>
+</SidebarProvider>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `Ctrl/Cmd + B`: Toggle sidebar open/collapsed (desktop). Can be disabled via `disableKeyboardShortcut`.
+  - `Escape`: Close mobile sidebar sheet.
+  - `Enter` / `Space`: Toggle sidebar via `SidebarTrigger`.
+  - `Tab`: Standard focus navigation between trigger, rail, and menu buttons.
+- **ARIA attributes managed**:
+  - `aria-controls`: `SidebarTrigger` and `SidebarRail` point to the sidebar panel via `panelId`.
+  - `aria-expanded`: `SidebarTrigger` reflects the current open state.
+  - `aria-label`: `Sidebar` defaults to `"Sidebar"`, `SidebarTrigger` defaults to `"Close sidebar"` / `"Open sidebar"`, `SidebarRail` defaults to `"Toggle sidebar"`.
+  - `aria-hidden`: Applied to the mobile overlay, the desktop gap element, and the sidebar panel when collapsed in offcanvas mode.
+  - `aria-current="page"`: Applied to active `SidebarMenuButton` and `SidebarMenuSubButton` elements.
+  - `aria-disabled`: Applied to disabled buttons/links.
+  - `role="switch"`: Not used; buttons use native `<button>` and `<a>` semantics.

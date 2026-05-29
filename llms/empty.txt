@@ -1,0 +1,113 @@
+# JamUI — Empty
+
+> A monospace, high-contrast, configurable empty state component for Svelte 5 (using Runes) and styled with Tailwind CSS.
+
+## Empty API & Usage Guide
+
+The JamUI Empty is a Svelte component that renders a configurable empty state placeholder. It uses Svelte 5 Runes (`$props`, `$derived`) and supports multiple variants (default, no-data, no-results, error) and sizes (sm, md, lg). Each variant maps to a specific Lucide icon and color scheme. The component accepts a custom icon snippet to override the default, and renders an optional title, description, and action slot (children).
+
+### Component Structure
+
+- `Empty`: Single component that renders the empty state with icon, title, description, and optional action area.
+
+---
+
+## Components API
+
+### Empty.svelte
+
+Renders a centered empty state with an icon, title, description, and optional action slot.
+
+#### Props
+- `children`: `Snippet` (optional). Action area rendered below the description (e.g., buttons, links).
+- `class`: `string` (default: `''`). Additional CSS classes.
+- `description`: `string` (default: `''`). Descriptive text below the title.
+- `icon`: `Snippet` (optional). Custom icon snippet to override the default variant icon.
+- `size`: `'sm' | 'md' | 'lg'` (default: `'md'`). Controls padding, gap, icon size, and text size.
+- `title`: `string` (default: `''`). Bold heading text.
+- `variant`: `'default' | 'no-data' | 'no-results' | 'error'` (default: `'default'`). Determines the default icon and color scheme.
+- Plus all standard `HTMLAttributes<HTMLDivElement>` (excluding `class` and `title`).
+
+#### Variant Icon & Color Mapping
+
+| Variant | Default Icon | Icon Color Class |
+|---------|-------------|-----------------|
+| `default` | `PackageOpen` | `text-jam-soft` |
+| `no-data` | `Database` | `text-jam-soft` |
+| `no-results` | `SearchX` | `text-jam-muted` |
+| `error` | `AlertTriangle` | `text-jam-danger` |
+
+#### Size Class Mappings
+
+| Size | Container | Icon Size | Icon Stroke | Title | Description |
+|------|-----------|-----------|-------------|-------|-------------|
+| `sm` | `gap-1.5 p-3` | `h-6 w-6` | `stroke-[2.5]` | `text-[10px] tracking-[0.18em]` | `text-[10px] leading-relaxed` |
+| `md` | `gap-2 p-6` | `h-10 w-10` | `stroke-[2]` | `text-[11px] tracking-[0.18em]` | `text-xs leading-relaxed` |
+| `lg` | `gap-3 p-8` | `h-14 w-14` | `stroke-[1.5]` | `text-xs tracking-[0.2em]` | `text-sm leading-relaxed` |
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Soft Accent Text**: `#bdbcff` (`text-jam-soft`)
+- **Danger**: `#e81123` (`text-jam-danger`)
+- **Mono Font**: `font-jam-mono`
+
+#### Component Default Styles:
+
+- **Empty Root**: `flex flex-col items-center justify-center text-center font-jam-mono`
+- **Icon Container**: `flex shrink-0 items-center justify-center`
+- **Title**: `font-black uppercase`
+- **Description**: `font-medium`
+- **Action Area**: `mt-1 flex items-center gap-2`
+
+---
+
+## Examples
+
+### Default Empty State
+```svelte
+<script lang="ts">
+  import { Empty } from 'jamui';
+</script>
+
+<Empty title="No items yet" description="Create your first item to get started.">
+  <button class="bg-jam-bg text-jam-text px-4 py-2 font-bold uppercase text-xs">Create Item</button>
+</Empty>
+```
+
+### No Results Empty State
+```svelte
+<script lang="ts">
+  import { Empty } from 'jamui';
+</script>
+
+<Empty variant="no-results" title="No results found" description="Try adjusting your search terms." />
+```
+
+### Small Error Empty State with Custom Icon
+```svelte
+<script lang="ts">
+  import { Empty } from 'jamui';
+  import { Siren } from '@lucide/svelte';
+</script>
+
+<Empty variant="error" size="sm" title="Something went wrong" description="An unexpected error occurred.">
+  <button class="bg-jam-bg text-jam-text px-4 py-2 font-bold uppercase text-xs">Retry</button>
+</Empty>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **ARIA attributes managed**:
+  - `aria-hidden="true"` on the default icon (decorative).
+- **Semantic structure**: The component uses `<div>` for the root, `<p>` for title and description, and a `<div>` for the action area. Custom icons passed via the `icon` snippet should include appropriate ARIA attributes.
+- **No keyboard navigation required**: The Empty component is a static display element. Interactive elements (buttons, links) placed in the children slot handle their own keyboard interactions.

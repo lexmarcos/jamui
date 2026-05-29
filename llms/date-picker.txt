@@ -1,0 +1,232 @@
+# JamUI — Date Picker
+
+> A full-featured, accessible date picker with single and range modes, locale support, manual input, and a calendar popover for Svelte 5.
+
+## Date Picker API & Usage Guide
+
+The JamUI Date Picker is a comprehensive date selection component for Svelte 5. It supports both single-date and date-range modes, accepts multiple input value formats (Date objects, ISO strings, range objects, arrays), and provides a calendar popover with keyboard-navigable day grid. It uses Svelte 5 Runes (`$state`, `$derived`, `$effect`, `$props`, `$bindable`) for all state management. The component includes manual text input with format-aware parsing, min/max date constraints, custom date disable logic, locale-aware formatting, and multiple visual variants and sizes.
+
+### Component Structure
+
+- `DatePicker`: A self-contained component that renders the label, a field input with optional calendar icon and clear button, a floating calendar popover with month/year navigation, day grid, and "Today" button. It manages its own popover positioning, keyboard navigation, and value synchronization.
+
+---
+
+## Components API
+
+### DatePicker.svelte
+
+The complete date picker component. Renders a labeled input field and a popover calendar dialog.
+
+#### Props
+- `class`: `string` (default: `''`). Additional CSS classes applied to the root container.
+- `clearable`: `boolean` (default: `false`). Shows a clear (X) button when a date is selected.
+- `defaultValue`: `DatePickerValue` (default: `null`). Initial value for uncontrolled usage.
+- `description`: `string` (default: `''`). Description text below the input (alias for `helperText`).
+- `disabled`: `boolean` (default: `false`). Disables the input and calendar.
+- `error`: `string` (default: `''`). Error message displayed below the input. Sets `aria-invalid` and danger styling.
+- `format`: `string | ((date: Date, locale?: string) => string)` (default: `'dd/MM/yyyy'`). Date format string using `yyyy`, `MM`, `dd` tokens, or a custom formatting function.
+- `helperText`: `string` (default: `''`). Helper text below the input (hidden when `error` is set).
+- `hint`: `string` (default: `''`). Alias for `helperText`.
+- `id`: `string` (default: auto-generated). Unique ID for the input.
+- `isDateDisabled`: `(date: Date) => boolean` (optional). Custom function to determine if a specific date should be disabled.
+- `label`: `string` (default: `''`). Visible label text above the input.
+- `locale`: `string` (default: `'pt-BR'`). Locale for date formatting and weekday names (e.g., `'en-US'`, `'pt-BR'`).
+- `manualInput`: `boolean` (default: `true`). Allows typing dates directly into the input field.
+- `maxDate`: `DatePickerDateValue` (optional). Maximum selectable date.
+- `minDate`: `DatePickerDateValue` (optional). Minimum selectable date.
+- `mode`: `'single' | 'range'` (default: `'single'`). Selection mode.
+- `name`: `string` (optional). Form name attribute for the hidden input.
+- `onBlur`: `(event: FocusEvent) => void` (optional). Callback when focus leaves the component.
+- `onChange`: `(value: Date | DatePickerRange | null, details: DatePickerChangeDetails) => void` (optional). Callback when the selected value changes.
+- `onFocus`: `(event: FocusEvent) => void` (optional). Callback when the component receives focus.
+- `placeholder`: `string` (default: `'Selecione uma data'`). Placeholder text for the input. In range mode, defaults to `'Data inicial - final'` if not overridden.
+- `rangeSeparator`: `string` (default: `' - '`). Separator between start and end dates in range mode.
+- `readOnly`: `boolean` (default: `false`). Makes the input read-only (visual styling applied).
+- `readonly`: `boolean` (default: `false`). Alias for `readOnly`.
+- `required`: `boolean` (default: `false`). Adds the required attribute to the input.
+- `showCalendarIcon`: `boolean` (default: `true`). Shows a calendar icon button that toggles the popover.
+- `showToday`: `boolean` (default: `true`). Shows a "Today" button at the bottom of the calendar popover.
+- `size`: `'sm' | 'md' | 'lg'` (default: `'md'`). Controls the input height and font size.
+  - `sm`: `min-h-9 text-[10px]`
+  - `md`: `min-h-12 text-xs`
+  - `lg`: `min-h-14 text-sm`
+- `state`: `'normal' | 'error' | 'success'` (default: `'normal'`). Visual validation state. Error is auto-set when `error` prop is provided.
+- `value`: `DatePickerValue` (bindable, default: `undefined`). The current date value. Accepts `Date`, `string`, `DatePickerRange`, `[start, end]` array, or `null`.
+- `variant`: `'default' | 'filled' | 'outline' | 'ghost'` (default: `'default'`). Visual variant of the input field.
+  - `default`: White background, blue border, blue focus shadow.
+  - `filled`: Dark input surface background, subtle border.
+  - `outline`: Transparent background, stronger border.
+  - `ghost`: No background, no border.
+
+---
+
+### DatePickerValue
+
+The value type accepted by the `value` prop.
+
+```
+Date | string | null | undefined | { start?: Date | string | null; end?: Date | string | null } | [Date | string | null, Date | string | null]
+```
+
+---
+
+### DatePickerChangeDetails
+
+Details object passed to the `onChange` callback.
+
+#### Properties
+- `value`: `Date | DatePickerRange | null`. The new value.
+- `formattedValue`: `string`. The formatted display string.
+- `name`: `string | undefined`. The form name attribute.
+- `startDate`: `Date | null | undefined` (range mode only). The range start date.
+- `endDate`: `Date | null | undefined` (range mode only). The range end date.
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+- **Danger**: `#e81123` (`text-jam-danger`, `border-jam-danger`)
+
+#### Variants Style mapping:
+- **Input field (default)**: White background (`bg-jam-text`), blue text (`text-jam-bg`), border `border-jam-bg/35`. Hover `hover:border-jam-bg/60`, focus `focus-within:border-jam-bg focus-within:shadow-[4px_4px_0_var(--color-jam-bg)]`.
+- **Input field (filled)**: `border-jam-text/25 bg-jam-input text-jam-text`. Hover `hover:border-jam-text`, focus `focus-within:border-jam-text focus-within:shadow-jam-hard-sm`.
+- **Input field (outline)**: `border-jam-text/55 bg-transparent text-jam-text`. Same hover/focus as filled.
+- **Input field (ghost)**: `border-transparent bg-transparent text-jam-text`. Same hover/focus as filled.
+- **Disabled**: `border-jam-text/15 bg-jam-text/20 text-jam-text/35 shadow-none cursor-not-allowed`.
+- **Read-only**: `cursor-default opacity-80`.
+- **Error state**: `border-jam-danger focus-within:border-jam-danger focus-within:shadow-[4px_4px_0_rgba(232,17,35,0.55)]`.
+- **Success state**: `border-jam-text focus-within:border-jam-text focus-within:shadow-jam-hard-sm`.
+- **Calendar popover**: `bg-jam-text text-jam-bg border border-jam-bg/15 shadow-jam-hard-blue-sm`, z-index `z-50`.
+- **Month/year navigation buttons**: `border border-jam-bg/20 bg-transparent text-jam-bg`. Hover `hover:border-jam-bg hover:bg-jam-bg hover:text-jam-text`.
+- **Weekday headers**: `text-[10px] font-black uppercase tracking-[0.08em] text-jam-bg/55`.
+- **Day button (normal, in month)**: `border-transparent text-jam-bg hover:border-jam-bg/30 hover:bg-jam-bg/10`.
+- **Day button (selected)**: `border-jam-bg bg-jam-bg text-jam-text`.
+- **Day button (range start/end)**: Same as selected.
+- **Day button (in range, not endpoints)**: `border-jam-bg/20 bg-jam-bg/10 text-jam-bg`.
+- **Day button (today, not selected)**: `border-jam-bg/55 text-jam-bg hover:bg-jam-bg/10`.
+- **Day button (out of month)**: `text-jam-bg/40 hover:border-jam-bg/20 hover:bg-jam-bg/5`.
+- **Day button (unavailable/disabled)**: `cursor-not-allowed border-transparent text-jam-bg/25 line-through`.
+- **Day button (focused)**: `ring-1 ring-jam-bg/60`.
+- **"Today" button**: `border border-jam-bg/25 bg-transparent text-[10px] font-black uppercase`. Hover `hover:border-jam-bg hover:bg-jam-bg hover:text-jam-text`.
+- **Label**: `text-[10px] font-black uppercase tracking-[0.18em] text-jam-muted`.
+- **Error message**: `text-[11px] font-bold uppercase tracking-[0.1em] text-jam-danger`.
+- **Helper text**: `text-[11px] font-medium tracking-[0.08em] text-jam-soft/70`.
+
+---
+
+## Examples
+
+### Basic Single Date Picker
+```svelte
+<script lang="ts">
+  import { DatePicker } from 'jamui';
+
+  let birthday = $state<Date | null>(null);
+</script>
+
+<DatePicker label="Birthday" bind:value={birthday} locale="en-US" format="MM/dd/yyyy" />
+```
+
+### Range Date Picker with Constraints
+```svelte
+<script lang="ts">
+  import { DatePicker, type DatePickerRange } from 'jamui';
+
+  let tripDates = $state<DatePickerRange | null>(null);
+
+  function disableWeekends(date: Date) {
+    const day = date.getDay();
+    return day === 0 || day === 6;
+  }
+</script>
+
+<DatePicker
+  label="Trip Dates"
+  mode="range"
+  bind:value={tripDates}
+  minDate="2026-06-01"
+  maxDate="2026-12-31"
+  isDateDisabled={disableWeekends}
+  clearable
+  locale="en-US"
+/>
+```
+
+### Date Picker with Variants and Error
+```svelte
+<script lang="ts">
+  import { DatePicker } from 'jamui';
+
+  let dueDate = $state<Date | null>(null);
+</script>
+
+<div class="flex gap-4">
+  <DatePicker label="Default" variant="default" bind:value={dueDate} size="md" />
+  <DatePicker label="Filled" variant="filled" bind:value={dueDate} size="md" />
+  <DatePicker label="Outline" variant="outline" bind:value={dueDate} size="md" />
+  <DatePicker label="Ghost" variant="ghost" bind:value={dueDate} size="md" />
+</div>
+
+<DatePicker
+  label="Due Date"
+  bind:value={dueDate}
+  error={!dueDate ? 'Date is required' : ''}
+  required
+  size="lg"
+  helperText="Select a date in the future"
+/>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation (Input)**:
+  - `Escape`: Closes the calendar popover and restores focus to the input.
+  - `ArrowDown` / `Enter`: Opens the calendar popover.
+  - `Space` (when `manualInput` is false): Opens the calendar popover.
+- **Keyboard Navigation (Calendar Popover)**:
+  - `Escape`: Closes the calendar and restores focus to the input.
+  - `ArrowRight`: Moves focus to the next day.
+  - `ArrowLeft`: Moves focus to the previous day.
+  - `ArrowDown`: Moves focus to the same day next week (+7 days).
+  - `ArrowUp`: Moves focus to the same day previous week (-7 days).
+  - `Home`: Moves focus to the first day of the current week.
+  - `End`: Moves focus to the last day of the current week.
+  - `PageUp`: Moves to the previous month.
+  - `PageDown`: Moves to the next month.
+  - `Shift+PageUp`: Moves to the previous year.
+  - `Shift+PageDown`: Moves to the next year.
+  - `Enter` / `Space`: Selects the focused day.
+- **ARIA attributes managed**:
+  - `role="combobox"` on the input element.
+  - `aria-haspopup="dialog"` on the input.
+  - `aria-expanded` on the input indicates popover open state.
+  - `aria-controls` links the input to the calendar popover.
+  - `aria-describedby` links the input to helper/error text.
+  - `aria-invalid="true"` when the error state is active.
+  - `aria-readonly="true"` when read-only.
+  - `aria-required="true"` when required.
+  - `role="dialog"` on the calendar popover with `aria-modal="false"`.
+  - `aria-labelledby` on the dialog links to the month/year caption.
+  - `role="grid"` on the calendar day grid with `aria-labelledby`.
+  - `role="row"` on each week row.
+  - `role="columnheader"` on weekday headers.
+  - `role="gridcell"` on each day cell container.
+  - `aria-label` on each day button provides full date description and availability status.
+  - `aria-disabled="true"` on unavailable day buttons.
+  - `aria-current="date"` on the today button.
+  - `aria-pressed` on selected/in-range day buttons.
+  - `aria-expanded` on the calendar icon button.
+  - `aria-controls` on the calendar icon button links to the calendar popover.
+  - `aria-label` on navigation buttons (previous/next month, previous/next year).
+  - `aria-hidden="true"` on decorative icons.

@@ -1,0 +1,123 @@
+# JamUI — Slider
+
+> A monospace, high-contrast, fully accessible slider component for Svelte 5 (using Runes) and styled with Tailwind CSS.
+
+## Slider API & Usage Guide
+
+The JamUI Slider is a custom range input that supports drag, click, and keyboard interactions. It uses Svelte 5 Runes (`$props`, `$state`, `$derived`, `$bindable`) and renders a track, fill bar, and draggable thumb. The component supports four color variants, three sizes, and displays an optional label with the current value.
+
+### Component Structure
+
+- `Slider`: A self-contained component that renders the track, fill, thumb, and optional label/value display.
+
+---
+
+## Components API
+
+### Slider.svelte
+
+A custom slider control for selecting a numeric value within a range.
+
+#### Props
+- `class`: `string` (default: `''`). Additional CSS classes to apply to the outer wrapper.
+- `label`: `string` (default: `''`). Label text displayed above the slider. Also used as the `aria-label` when no label is provided.
+- `max`: `number` (default: `100`). Maximum value of the slider.
+- `min`: `number` (default: `0`). Minimum value of the slider.
+- `size`: `'sm' | 'md' | 'lg'` (default: `'md'`). Controls track height and thumb size.
+- `step`: `number` (default: `1`). Increment step for value changes.
+- `value`: `number` (bindable, default: `0`). The current value. Bound two-way with `bind:value`.
+- `variant`: `'default' | 'success' | 'warning' | 'danger'` (default: `'default'`). Color variant for the fill and thumb border.
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Variants Style mapping:
+- `default`: Fill `bg-jam-text`, thumb border `border-jam-bg`
+- `success`: Fill `bg-[#22c55e]`, thumb border `border-[#22c55e]`
+- `warning`: Fill `bg-[#f59e0b]`, thumb border `border-[#f59e0b]`
+- `danger`: Fill `bg-jam-danger`, thumb border `border-jam-danger`
+
+#### Size classes:
+- Track height: `sm` = `h-1`, `md` = `h-2`, `lg` = `h-3`
+- Thumb size: `sm` = `h-3.5 w-3.5`, `md` = `h-5 w-5`, `lg` = `h-6 w-6`
+
+#### Label display:
+- Label and value displayed in a flex row above the track, styled as `text-[10px] font-black uppercase tracking-[0.18em] text-jam-muted`.
+
+---
+
+## Examples
+
+### Basic Slider
+```svelte
+<script lang="ts">
+  import { Slider } from 'jamui';
+
+  let volume = $state(50);
+</script>
+
+<Slider bind:value={volume} label="Volume" />
+<p class="text-jam-text text-sm">Current value: {volume}</p>
+```
+
+### Slider with Custom Range and Step
+```svelte
+<script lang="ts">
+  import { Slider } from 'jamui';
+
+  let brightness = $state(75);
+</script>
+
+<Slider bind:value={brightness} label="Brightness" min={0} max={100} step={5} />
+```
+
+### Danger Variant Slider
+```svelte
+<script lang="ts">
+  import { Slider } from 'jamui';
+
+  let risk = $state(30);
+</script>
+
+<Slider bind:value={risk} label="Risk Level" variant="danger" size="lg" />
+```
+
+### Success Variant Small Slider
+```svelte
+<script lang="ts">
+  import { Slider } from 'jamui';
+
+  let progress = $state(65);
+</script>
+
+<Slider bind:value={progress} label="Progress" variant="success" size="sm" />
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `ArrowRight` / `ArrowUp`: Increase value by `step`.
+  - `ArrowLeft` / `ArrowDown`: Decrease value by `step`.
+  - `PageUp`: Increase value by `step * 10`.
+  - `PageDown`: Decrease value by `step * 10`.
+  - `Home`: Set value to `min`.
+  - `End`: Set value to `max`.
+- **ARIA attributes managed**:
+  - `role="slider"`: Applied to the track container.
+  - `aria-valuenow`: Set to the current clamped value.
+  - `aria-valuemin`: Set to the `min` prop.
+  - `aria-valuemax`: Set to the `max` prop.
+  - `aria-label`: Set to the `label` prop, or `"Slider"` if no label is provided.
+  - `tabindex="0"`: Makes the slider focusable via keyboard.

@@ -1,0 +1,205 @@
+# JamUI — Drawer
+
+> A monospace, high-contrast, fully accessible sliding drawer/panel component for Svelte 5 (using Runes) and styled with Tailwind CSS.
+
+## Drawer API & Usage Guide
+
+The JamUI Drawer is a set of Svelte components that build an accessible sliding drawer panel. It uses Svelte 5 Runes (`$state`, `$derived`, `$props`, `$effect`, `tick`) and context-based state management. The Drawer supports four positions (left, right, top, bottom), focus trapping, keyboard dismissal, overlay click-to-close, and full ARIA compliance. It renders via a trigger snippet pattern where the trigger element receives ARIA props from the parent.
+
+### Component Structure
+
+- `Drawer`: Root container that manages state, renders the trigger, overlay, and panel.
+- `DrawerContent`: Scrollable content area inside the drawer panel.
+- `DrawerHeader`: Header section with bottom border.
+- `DrawerFooter`: Footer section with top border.
+- `DrawerClose`: Button that closes the drawer (renders an X icon by default).
+
+---
+
+## Components API
+
+### Drawer.svelte
+
+Root wrapper component. Manages open state, renders trigger, overlay, and panel. Provides context to child components.
+
+#### Props
+- `children`: `Snippet` (optional). Child content rendered inside the panel.
+- `class`: `string` (default: `''`). Additional CSS classes on the root wrapper.
+- `open`: `boolean` (bindable, default: `false`). Controls the open state of the drawer.
+- `position`: `'left' | 'right' | 'top' | 'bottom'` (default: `'right'`). The side from which the drawer slides in.
+- `trigger`: `Snippet<[DrawerTriggerProps]>` (required). A snippet that renders the trigger element. Receives ARIA props, event handlers, and a ref callback.
+- `aria-label`: `string` (default: `'Painel'`). Accessible label for the drawer panel when no `aria-labelledby` is provided.
+- `aria-labelledby`: `string` (optional). ID of an element that labels the drawer panel.
+- Plus all standard `HTMLAttributes<HTMLDivElement>`.
+
+#### Position Classes
+- `left`: `bottom-0 left-0 top-0 w-full max-w-sm`
+- `right`: `bottom-0 right-0 top-0 w-full max-w-sm`
+- `top`: `left-0 right-0 top-0 h-full max-h-80`
+- `bottom`: `bottom-0 left-0 right-0 h-full max-h-80`
+
+#### Hidden Transform Classes
+- `left`: `-translate-x-full`
+- `right`: `translate-x-full`
+- `top`: `-translate-y-full`
+- `bottom`: `translate-y-full`
+
+---
+
+### DrawerContent.svelte
+
+Scrollable content area inside the drawer panel.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- Plus all standard `HTMLAttributes<HTMLDivElement>` (excluding `role` and `aria-modal`).
+
+---
+
+### DrawerHeader.svelte
+
+Header section with a bottom border separator.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- Plus all standard `HTMLAttributes<HTMLDivElement>`.
+
+---
+
+### DrawerFooter.svelte
+
+Footer section with a top border separator.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- Plus all standard `HTMLAttributes<HTMLDivElement>`.
+
+---
+
+### DrawerClose.svelte
+
+Button that closes the drawer. Renders a Lucide `X` icon by default if no children are provided.
+
+#### Props
+- `children`: `Snippet` (optional). Child content. If omitted, renders a default `X` icon.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- `aria-label`: `string` (default: `'Fechar'` when no children, `undefined` when children exist). Accessible label for the close button.
+- Plus all standard `HTMLButtonAttributes` (excluding `onclick`).
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Component Default Styles:
+
+- **Drawer Panel**: `fixed z-50 flex flex-col overflow-auto bg-jam-text font-jam-mono text-jam-bg shadow-jam-hard-blue-md transition-transform duration-300 ease-out`
+- **Drawer Overlay**: `fixed inset-0 z-40 bg-jam-bg/70 transition-opacity duration-300 ease-out`
+- **DrawerContent**: `flex flex-1 flex-col overflow-auto`
+- **DrawerHeader**: `flex items-center justify-between border-b border-jam-bg/10 px-4 py-3`
+- **DrawerFooter**: `flex items-center justify-end gap-2 border-t border-jam-bg/10 px-4 py-3`
+- **DrawerClose**: `flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-none border border-jam-bg/20 bg-transparent text-jam-bg/70 transition-colors duration-150 hover:border-jam-bg hover:bg-jam-bg/10 hover:text-jam-bg focus:outline-none focus-visible:ring-2 focus-visible:ring-jam-bg focus-visible:ring-offset-2 focus-visible:ring-offset-jam-text`
+
+---
+
+## Examples
+
+### Basic Right Drawer
+```svelte
+<script lang="ts">
+  import { Drawer, DrawerContent, DrawerHeader, DrawerFooter, DrawerClose } from 'jamui';
+</script>
+
+<Drawer position="right">
+  {#snippet trigger(props)}
+    <button {...props} class="bg-jam-text text-jam-bg px-4 py-2 font-bold uppercase">Open Drawer</button>
+  {/snippet}
+  <DrawerHeader>
+    <span class="text-xs font-bold uppercase tracking-wider">Panel Title</span>
+    <DrawerClose />
+  </DrawerHeader>
+  <DrawerContent class="p-4">
+    <p class="text-sm">Drawer content goes here.</p>
+  </DrawerContent>
+  <DrawerFooter>
+    <button class="bg-jam-bg text-jam-text px-4 py-2 font-bold uppercase">Save</button>
+  </DrawerFooter>
+</Drawer>
+```
+
+### Left Drawer with Custom Label
+```svelte
+<script lang="ts">
+  import { Drawer, DrawerContent, DrawerHeader, DrawerClose } from 'jamui';
+</script>
+
+<Drawer position="left" aria-labelledby="sidebar-title">
+  {#snippet trigger(props)}
+    <button {...props} class="bg-jam-text text-jam-bg px-4 py-2 font-bold uppercase">Open Sidebar</button>
+  {/snippet}
+  <DrawerHeader>
+    <span id="sidebar-title" class="text-xs font-bold uppercase tracking-wider">Sidebar</span>
+    <DrawerClose />
+  </DrawerHeader>
+  <DrawerContent class="p-4">
+    <nav class="flex flex-col gap-2">
+      <a href="/" class="text-sm font-bold hover:underline">Home</a>
+      <a href="/settings" class="text-sm font-bold hover:underline">Settings</a>
+    </nav>
+  </DrawerContent>
+</Drawer>
+```
+
+### Bottom Drawer
+```svelte
+<script lang="ts">
+  import { Drawer, DrawerContent, DrawerHeader, DrawerFooter, DrawerClose } from 'jamui';
+</script>
+
+<Drawer position="bottom">
+  {#snippet trigger(props)}
+    <button {...props} class="bg-jam-text text-jam-bg px-4 py-2 font-bold uppercase">Open Bottom Drawer</button>
+  {/snippet}
+  <DrawerHeader>
+    <span class="text-xs font-bold uppercase tracking-wider">Bottom Sheet</span>
+    <DrawerClose />
+  </DrawerHeader>
+  <DrawerContent class="p-4">
+    <p class="text-sm">Content for the bottom drawer.</p>
+  </DrawerContent>
+  <DrawerFooter>
+    <button class="bg-jam-bg text-jam-text px-4 py-2 font-bold uppercase">Confirm</button>
+  </DrawerFooter>
+</Drawer>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `Escape`: Closes the drawer. Prevents default and stops propagation.
+  - `Tab`: Traps focus within the drawer panel. Moves focus to the next focusable element. When on the last element, wraps to the first. With `Shift+Tab`, wraps from the first to the last.
+  - `Enter` / `Space` on the trigger: Opens the drawer.
+- **ARIA attributes managed**:
+  - `role="dialog"` on the drawer panel.
+  - `aria-modal="true"` on the drawer panel when open.
+  - `aria-hidden="true"` on the overlay.
+  - `aria-label` on the panel when no `aria-labelledby` is provided.
+  - `aria-labelledby` on the panel when provided.
+  - `aria-haspopup="dialog"` on the trigger element.
+  - `aria-expanded` on the trigger element (reflects open state).
+  - `aria-controls` on the trigger element (links to panel ID).
+- **Focus management**: On open, focus moves to the first focusable element inside the panel (or the panel itself). On close, focus returns to the element that was focused before the drawer opened, falling back to the trigger element.
+- **Click outside**: Clicking the overlay closes the drawer.

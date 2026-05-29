@@ -1,0 +1,240 @@
+# JamUI — Data Table
+
+> A feature-rich, accessible data table component with sorting, filtering, pagination, row selection, and density controls for Svelte 5.
+
+## Data Table API & Usage Guide
+
+The JamUI Data Table is a comprehensive data grid built on top of TanStack Table Core, wrapped in Svelte 5 Runes. It provides sorting, global filtering, pagination, row selection, column visibility toggling, density controls, loading skeleton states, empty states, and custom cell/header rendering via snippets. The component is generic (`TData`) and derives its column definitions from a declarative `DataTableColumn` array, mapping them to TanStack's `ColumnDef` format internally. All table state (sorting, filters, pagination, selection, visibility) is managed via Svelte 5 `$state` and `$derived` runes.
+
+### Component Structure
+
+- `DataTable`: A single self-contained component that renders the full table card including title strip, toolbar (search, density toggle, column visibility, custom actions), the scrollable table body with sticky header, and pagination footer.
+
+---
+
+## Components API
+
+### DataTable.svelte
+
+The complete data table component. Accepts data, column definitions, and configuration props to render a fully functional data grid.
+
+#### Props
+- `class`: `string` (default: `''`). Additional CSS classes applied to the root container.
+- `data`: `TData[]` (required). The array of row data objects.
+- `columns`: `DataTableColumn<TData>[]` (required). Column definitions. Each column can specify `id`, `accessor`, `header`, `align`, `width`, `minWidth`, `maxWidth`, `enableSorting`, `enableHiding`, `enableGlobalFilter`, `cell` (snippet), `headerCell` (snippet), `cellClass`, `headerClass`, and `numeric`.
+- `density`: `'comfortable' | 'compact' | 'condensed'` (default: `'comfortable'`). Controls row padding density.
+  - `comfortable`: `px-5 py-3.5` (md) or `px-4 py-3` (sm)
+  - `compact`: `px-4 py-2.5` (md) or `px-3 py-2` (sm)
+  - `condensed`: `px-3 py-1.5` (md) or `px-2.5 py-1` (sm)
+- `size`: `'md' | 'sm'` (default: `'md'`). Typography scale for table text. `sm` uses `text-[11px]`, `md` uses `text-xs`.
+- `striped`: `boolean` (default: `false`). Applies alternating row background tint (`odd:bg-jam-text/[0.03]`).
+- `selectable`: `boolean` (default: `false`). Adds a leading checkbox column for row selection.
+- `onSelectionChange`: `(selectedRows: TData[]) => void` (optional). Callback fired when row selection changes.
+- `sortable`: `boolean` (default: `true`). Globally enables column sorting (per-column can override with `enableSorting`).
+- `initialSorting`: `SortingState` (default: `[]`). Initial sorting state as TanStack `SortingState`.
+- `pageable`: `boolean` (default: `true`). Renders pagination footer and enables client-side pagination.
+- `pageSize`: `number` (default: `10`). Number of rows per page.
+- `pageSizes`: `number[]` (default: `[5, 10, 25, 50]`). Available page size options in the footer selector.
+- `filterable`: `boolean` (default: `true`). Shows the global search input in the toolbar.
+- `searchPlaceholder`: `string` (default: `'Search…'`). Placeholder for the search input.
+- `showColumnVisibility`: `boolean` (default: `true`). Shows the column visibility toggle menu in the toolbar.
+- `showDensityToggle`: `boolean` (default: `true`). Shows the density toggle buttons (COMFY / COMPACT / TIGHT) in the toolbar.
+- `stickyHeader`: `boolean` (default: `true`). Sticks the `<thead>` to the top of the scrollable area.
+- `maxHeight`: `string` (optional). CSS max-height for the scrollable table body (e.g., `'500px'`).
+- `toolbar`: `Snippet` (optional). Custom snippet rendered in the toolbar area for additional actions.
+- `title`: `string` (default: `''`). Title text displayed in the top header strip.
+- `description`: `string` (default: `''`). Description text below the title.
+- `titleAside`: `Snippet` (optional). Content rendered on the right side of the title strip.
+- `caption`: `string` (default: `''`). Table caption rendered above the table.
+- `loading`: `boolean` (default: `false`). Renders animated skeleton placeholder rows instead of data.
+- `skeletonRows`: `number` (default: `6`). Number of skeleton rows to display while loading.
+- `empty`: `Snippet` (optional). Custom empty state snippet when no rows match.
+- `emptyTitle`: `string` (default: `'No results'`). Title for the default empty state.
+- `emptyDescription`: `string` (default: `'Try adjusting search or filters.'`). Description for the default empty state.
+- `rowKey`: `(row: TData, index: number) => string | number` (optional). Function to extract a stable key from each row for efficient re-rendering. Defaults to row index.
+- `onRowClick`: `(row: TData, index: number) => void` (optional). Callback fired when a row is clicked.
+- `initialColumnVisibility`: `VisibilityState` (default: `{}`). Initial column visibility state.
+
+---
+
+### DataTableColumn<TData>
+
+Type definition for column configuration passed in the `columns` prop.
+
+#### Properties
+- `id`: `string` (optional). Unique column identifier. Auto-derived from `accessor` if not provided.
+- `accessor`: `keyof TData | ((row: TData) => unknown)` (optional). Data accessor — either a key of `TData` or a function that extracts the cell value.
+- `header`: `string` (required). Column header label text.
+- `align`: `'left' | 'center' | 'right'` (optional). Text alignment. Numeric columns default to `'right'`.
+- `width`: `string` (optional). Fixed column width (CSS value).
+- `minWidth`: `string` (optional). Minimum column width (CSS value).
+- `maxWidth`: `string` (optional). Maximum column width (CSS value).
+- `enableSorting`: `boolean` (optional). Overrides global `sortable` for this column.
+- `enableHiding`: `boolean` (optional, default: `true`). Whether the column can be toggled via the visibility menu.
+- `enableGlobalFilter`: `boolean` (optional, default: `true`). Whether the column participates in global search.
+- `cell`: `Snippet<[CellContext<TData>]>` (optional). Custom cell renderer snippet. Receives `{ value, row, rowIndex, column, selected }`.
+- `headerCell`: `Snippet<[HeaderContext<TData>]>` (optional). Custom header cell renderer snippet. Receives `{ column, sorted }`.
+- `cellClass`: `string` (optional). Additional CSS classes for data cells in this column.
+- `headerClass`: `string` (optional). Additional CSS classes for the header cell of this column.
+- `numeric`: `boolean` (default: `false`). When true, right-aligns by default and uses tabular numerals.
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Variants Style mapping:
+- **Table container**: `border border-jam-text/30 bg-jam-surface shadow-jam-hard-md`.
+- **Title strip header**: `bg-jam-bg border-b border-jam-text/15 px-5 py-4`.
+- **Title text**: `text-[13px] font-black uppercase tracking-[0.22em] text-jam-text`.
+- **Row count badge**: `text-[10px] font-black uppercase tracking-[0.16em] text-jam-soft/70`.
+- **Description text**: `text-[11px] font-medium tracking-[0.08em] text-jam-soft/80`.
+- **Toolbar**: `bg-jam-surface-strong/40 border-b border-jam-text/15 px-3 py-2.5`.
+- **Search input**: White background (`bg-jam-text`), blue text (`text-jam-bg`), border `border-jam-bg/35`, focus shadow `shadow-[4px_4px_0_var(--color-jam-bg)]`.
+- **Density toggle button (active)**: `bg-jam-text text-jam-bg`.
+- **Density toggle button (inactive)**: `bg-transparent text-jam-muted hover:bg-jam-text/10 hover:text-jam-text`.
+- **Column visibility trigger (active)**: `bg-jam-text text-jam-bg`.
+- **Column visibility trigger (inactive)**: `bg-transparent text-jam-muted hover:bg-jam-text/10 hover:text-jam-text`.
+- **Table header row**: `bg-jam-bg` with inset bottom shadow `shadow-[inset_0_-2px_0_0_var(--color-jam-text)]`.
+- **Header text**: `text-[10px] font-black uppercase tracking-[0.18em] text-jam-muted`.
+- **Sort indicators**: `ChevronUp` and `ChevronDown` icons — active is `text-jam-text`, inactive is `text-jam-text/25`.
+- **Body text**: `text-xs font-medium tracking-[0.05em]` (md) or `text-[11px]` (sm).
+- **Row hover**: `hover:bg-jam-text/[0.07] hover:shadow-[inset_3px_0_0_0_rgba(251,251,255,0.45)]`.
+- **Row selected**: `bg-jam-text/[0.10] shadow-[inset_3px_0_0_0_var(--color-jam-text)]`.
+- **Row striped**: `odd:bg-jam-text/[0.03]`.
+- **Checkbox (checked)**: `border-jam-text bg-jam-text text-jam-bg`.
+- **Checkbox (unchecked)**: `border-jam-text/50 hover:border-jam-text` (header) or `border-jam-text/40 hover:border-jam-text` (row).
+- **Checkbox mixed state**: `border-jam-text bg-jam-text text-jam-bg` with Minus icon.
+- **Empty state**: Dashed border container with `Inbox` icon, centered text.
+- **Pagination footer**: `bg-jam-bg border-t border-jam-text/15 px-4 py-2.5`.
+- **Pagination buttons**: `h-7 w-7` with hover `hover:bg-jam-text hover:text-jam-bg`, disabled `text-jam-text/25`.
+- **Page jump input**: `h-7 w-20 border border-jam-text/30`, focus `bg-jam-text text-jam-bg`.
+- **Select dropdown**: `h-7 border border-jam-text/30`, focus `bg-jam-text text-jam-bg`.
+- **Skeleton rows**: `animate-pulse bg-jam-text/15` bars with varied widths.
+
+---
+
+## Examples
+
+### Basic Data Table
+```svelte
+<script lang="ts">
+  import { DataTable, type DataTableColumn } from 'jamui';
+
+  type User = { name: string; email: string; role: string };
+
+  const data: User[] = [
+    { name: 'Alice', email: 'alice@example.com', role: 'Admin' },
+    { name: 'Bob', email: 'bob@example.com', role: 'Editor' },
+    { name: 'Charlie', email: 'charlie@example.com', role: 'Viewer' }
+  ];
+
+  const columns: DataTableColumn<User>[] = [
+    { accessor: 'name', header: 'Name' },
+    { accessor: 'email', header: 'Email' },
+    { accessor: 'role', header: 'Role', align: 'right' }
+  ];
+</script>
+
+<DataTable {data} {columns} title="Users" />
+```
+
+### Selectable Table with Custom Cell Renderers
+```svelte
+<script lang="ts">
+  import { DataTable, type DataTableColumn, type CellContext } from 'jamui';
+
+  type Product = { id: number; name: string; price: number; stock: number };
+
+  const data: Product[] = [
+    { id: 1, name: 'Widget', price: 9.99, stock: 150 },
+    { id: 2, name: 'Gadget', price: 24.50, stock: 0 },
+    { id: 3, name: 'Doohickey', price: 14.75, stock: 42 }
+  ];
+
+  function priceCell(ctx: CellContext<Product>) {
+    return `$${(ctx.value as number).toFixed(2)}`;
+  }
+
+  function stockBadge(ctx: CellContext<Product>) {
+    const stock = ctx.value as number;
+    return stock > 0 ? `${stock} in stock` : 'Out of stock';
+  }
+
+  const columns: DataTableColumn<Product>[] = [
+    { accessor: 'name', header: 'Product' },
+    { accessor: 'price', header: 'Price', align: 'right', numeric: true, cell: priceCell },
+    { accessor: 'stock', header: 'Stock', align: 'center', cell: stockBadge }
+  ];
+</script>
+
+<DataTable
+  {data}
+  {columns}
+  selectable
+  title="Inventory"
+  onSelectionChange={(rows) => console.log('Selected:', rows)}
+/>
+```
+
+### Full-Featured Table with Density, Filtering, and Loading
+```svelte
+<script lang="ts">
+  import { DataTable, type DataTableColumn } from 'jamui';
+
+  type LogEntry = { timestamp: string; level: string; message: string };
+
+  const data: LogEntry[] = [];
+
+  const columns: DataTableColumn<LogEntry>[] = [
+    { accessor: 'timestamp', header: 'Time', width: '180px' },
+    { accessor: 'level', header: 'Level', width: '100px', align: 'center' },
+    { accessor: 'message', header: 'Message' }
+  ];
+</script>
+
+<DataTable
+  {data}
+  {columns}
+  title="System Logs"
+  description="Recent application events"
+  loading
+  skeletonRows={8}
+  density="condensed"
+  size="sm"
+  striped
+  pageSize={25}
+  pageSizes={[10, 25, 50, 100]}
+/>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `Enter` / `Space`: Activates sort toggle on focused header button.
+  - `Arrow keys` in pagination: Navigate between pagination buttons.
+- **ARIA attributes managed**:
+  - `scope="col"` on all `<th>` elements.
+  - `aria-sort` on sortable column headers: `"ascending"`, `"descending"`, or `"none"`.
+  - `aria-checked` on row selection checkboxes: `"true"`, `"false"`, or `"mixed"` for the select-all checkbox.
+  - `aria-label` on pagination buttons: "First page", "Previous page", "Next page", "Last page".
+  - `aria-label` on search input: "Clear search" for the clear button.
+  - `aria-label="Select all rows on this page"` on the header select-all checkbox.
+  - `aria-label="Select row"` on each row's selection checkbox.
+  - `aria-label="Clear selection"` on the selection count dismiss button.
+  - `aria-haspopup="menu"` and `aria-expanded` on the column visibility toggle button.
+  - `role="menu"` on the column visibility dropdown.
+  - `role="menuitemcheckbox"` with `aria-checked` on each column visibility toggle item.
+  - `role="group"` with `aria-label="Row density"` on the density toggle button group.
+  - `aria-pressed` on each density toggle button.
+  - `data-selected` attribute on selected `<tr>` elements.

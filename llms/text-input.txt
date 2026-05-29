@@ -1,0 +1,116 @@
+# JamUI — TextInput
+
+> A monospace, high-contrast, fully accessible text input component for Svelte 5 (using Runes) and styled with Tailwind CSS.
+
+## TextInput API & Usage Guide
+
+The JamUI TextInput is a Svelte 5 component that renders a styled text input field with optional label, hint, and error message. It uses Svelte 5 Runes (`$derived`, `$props`, `$bindable`) and supports all standard HTML input types (text, email, password, search, tel, url). The input uses a bold inverted color scheme (white background, blue text) with a hard shadow on focus.
+
+### Component Structure
+
+- `TextInput`: A self-contained input field component with label, input element, and hint/error display.
+
+---
+
+## Components API
+
+### TextInput.svelte
+
+A text input field with optional label, hint text, and error message. Renders inside a `<label>` element for built-in accessibility.
+
+#### Props
+- `class`: `string` (default: `''`). Additional CSS classes on the outer `<label>` wrapper.
+- `disabled`: `boolean` (default: `false`). Disables the input.
+- `error`: `string` (default: `''`). Error message displayed below the input. When set, the input border turns red and `aria-invalid` is applied.
+- `hint`: `string` (default: `''`). Hint text displayed below the input (hidden when `error` is set).
+- `id`: `string` (optional). Sets the `id` on the `<input>` and generates `id`-based references for `aria-describedby` on hint and error elements.
+- `inputClass`: `string` (default: `''`). Additional CSS classes merged onto the `<input>` element itself.
+- `label`: `string` (default: `''`). Label text displayed above the input. Rendered as uppercase, bold, muted text.
+- `type`: `'email' | 'password' | 'search' | 'tel' | 'text' | 'url'` (default: `'text'`). The HTML input type.
+- `value`: `string` (bindable, default: `''`). The current input value. Use `bind:value` to read or set the value.
+- All additional `HTMLInputAttributes` are spread onto the `<input>` element (e.g., `placeholder`, `name`, `autocomplete`).
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+- **Danger**: `#e81123` (`text-jam-danger`, `border-jam-danger`)
+
+#### Variants Style mapping:
+
+**Input base class:**
+`min-h-12 w-full rounded-none border bg-jam-text px-4 text-sm font-bold font-jam-mono tracking-[0.06em] text-jam-bg outline-none transition-shadow duration-150 ease-out placeholder:text-jam-bg/25 hover:border-jam-bg/60 focus:border-jam-bg focus:shadow-[4px_4px_0_var(--color-jam-bg)] disabled:cursor-not-allowed disabled:border-jam-bg/15 disabled:bg-jam-text/40 disabled:text-jam-bg/30 disabled:placeholder:text-jam-bg/15`
+
+**Border variants:**
+- Default: `border-jam-bg/35`
+- Error: `border-jam-danger focus:border-jam-danger focus:shadow-[4px_4px_0_#e81123]`
+
+**Label:** `text-[10px] font-black uppercase tracking-[0.18em] text-jam-muted`
+
+**Error message:** `text-[11px] font-bold uppercase tracking-[0.1em] text-jam-danger` with `aria-live="polite"`
+
+**Hint message:** `text-[11px] font-medium tracking-[0.08em] text-jam-soft/70`
+
+---
+
+## Examples
+
+### Basic Text Input
+```svelte
+<script lang="ts">
+  import { TextInput } from 'jamui';
+</script>
+
+<TextInput label="Username" placeholder="Enter your username" />
+```
+
+### Input with Error State
+```svelte
+<script lang="ts">
+  import { TextInput } from 'jamui';
+
+  let email = $state('bad-email');
+</script>
+
+<TextInput
+  label="Email"
+  type="email"
+  bind:value={email}
+  error="Please enter a valid email address"
+/>
+```
+
+### Disabled Input with Hint
+```svelte
+<script lang="ts">
+  import { TextInput } from 'jamui';
+</script>
+
+<TextInput
+  label="API Key"
+  value="sk-1234567890abcdef"
+  disabled
+  hint="Contact your administrator to update this key"
+/>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `Tab`: Moves focus into and out of the input field.
+  - Standard text editing keyboard shortcuts apply within the input.
+- **ARIA attributes managed**:
+  - `aria-describedby` references the hint and/or error message element IDs when present.
+  - `aria-invalid="true"` is applied when the `error` prop is set.
+  - `aria-live="polite"` on the error message for screen reader announcements.
+  - The entire component is wrapped in a `<label>` element, associating the label with the input implicitly.

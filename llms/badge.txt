@@ -1,0 +1,119 @@
+# JamUI — Badge
+
+> A square, uppercase, mono-font badge component with five semantic variants and three visual styles.
+
+## Badge API & Usage Guide
+
+The JamUI Badge is a self-contained Svelte 5 component for displaying status labels, counts, or categories. It features five semantic variants (`default`, `success`, `warning`, `danger`, `info`), three visual styles (`filled`, `outline`, `soft`), and two sizes. The component uses `$props` and `$derived` runes and follows the JamUI high-contrast, mono-font aesthetic with sharp edges and uppercase text.
+
+### Component Structure
+
+- `Badge`: A single inline `<span>` element for displaying badge content.
+
+---
+
+## Components API
+
+### Badge.svelte
+
+The main badge component. Renders an inline `<span>` with the configured variant, style, and size.
+
+#### Props
+- `variant`: `'default' | 'success' | 'warning' | 'danger' | 'info'` (default: `'default'`). Semantic color variant.
+- `style`: `'filled' | 'outline' | 'soft'` (default: `'filled'`). Visual style that controls background, border, and text color treatment.
+- `size`: `'sm' | 'md'` (default: `'md'`). Controls padding, font size, and letter spacing.
+- `children`: `Snippet`. Badge label content.
+- `class`: `string` (default: `''`). Additional CSS classes merged with the base styles.
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Size Classes:
+- `sm`: `px-2 py-0.5 text-[10px] tracking-[0.14em]`
+- `md`: `px-3 py-1 text-[11px] tracking-[0.16em]`
+
+#### Variant Classes (Filled Style):
+- `default`: `bg-jam-text text-jam-bg`
+- `success`: `bg-[#22c55e] text-jam-text`
+- `warning`: `bg-[#f59e0b] text-jam-bg`
+- `danger`: `bg-jam-danger text-jam-text`
+- `info`: `bg-[#00b7c3] text-jam-text`
+
+#### Variant Classes (Outline Style):
+- `default`: `border border-jam-text text-jam-text bg-transparent`
+- `success`: `border border-[#22c55e] text-[#22c55e] bg-transparent`
+- `warning`: `border border-[#f59e0b] text-[#f59e0b] bg-transparent`
+- `danger`: `border border-jam-danger text-jam-danger bg-transparent`
+- `info`: `border border-[#00b7c3] text-[#00b7c3] bg-transparent`
+
+#### Variant Classes (Soft Style):
+- `default`: `bg-jam-text/10 text-jam-text`
+- `success`: `bg-[#22c55e]/10 text-[#22c55e]`
+- `warning`: `bg-[#f59e0b]/10 text-[#f59e0b]`
+- `danger`: `bg-jam-danger/10 text-jam-danger`
+- `info`: `bg-[#00b7c3]/10 text-[#00b7c3]`
+
+#### Base Styles:
+- Container: `inline-flex items-center justify-center rounded-none font-black uppercase font-jam-mono`
+
+---
+
+## Examples
+
+### Basic Filled Badge
+```svelte
+<script lang="ts">
+  import { Badge } from 'jamui';
+</script>
+
+<Badge>Default</Badge>
+<Badge variant="success">Active</Badge>
+<Badge variant="warning">Pending</Badge>
+<Badge variant="danger">Error</Badge>
+<Badge variant="info">Info</Badge>
+```
+
+### Outline and Soft Styles
+```svelte
+<script lang="ts">
+  import { Badge } from 'jamui';
+</script>
+
+<div class="flex gap-2">
+  <Badge style="filled" variant="success">Filled</Badge>
+  <Badge style="outline" variant="success">Outline</Badge>
+  <Badge style="soft" variant="success">Soft</Badge>
+</div>
+```
+
+### Sizes
+```svelte
+<script lang="ts">
+  import { Badge } from 'jamui';
+</script>
+
+<div class="flex items-center gap-2">
+  <Badge size="sm">Small</Badge>
+  <Badge size="md">Medium</Badge>
+</div>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - Badge is a non-interactive decorative element. No keyboard navigation required.
+- **ARIA attributes managed**:
+  - Badge is a plain `<span>` with no implicit ARIA role. Use `role="status"` or `aria-label` on a wrapper if semantic meaning is needed for screen readers.
+  - Visual variants are conveyed through color only; pair with visible text content for full accessibility.

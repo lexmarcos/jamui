@@ -1,0 +1,138 @@
+# JamUI — Textarea
+
+> A monospace, high-contrast, fully accessible textarea component for Svelte 5 (using Runes) and styled with Tailwind CSS.
+
+## Textarea API & Usage Guide
+
+The JamUI Textarea is a Svelte 5 component that renders a styled multi-line text input with optional label, hint, error message, and character counter. It uses Svelte 5 Runes (`$derived`, `$props`, `$bindable`) and supports configurable size, resize behavior, and maxLength tracking. The textarea uses a bold inverted color scheme (white background, blue text) with a hard shadow on focus.
+
+### Component Structure
+
+- `Textarea`: A self-contained textarea component with label, textarea element, hint/error display, and optional character counter.
+
+---
+
+## Components API
+
+### Textarea.svelte
+
+A multi-line text input field with optional label, hint text, error message, and character counter. Renders inside a `<label>` element for built-in accessibility.
+
+#### Props
+- `class`: `string` (default: `''`). Additional CSS classes on the outer `<label>` wrapper.
+- `disabled`: `boolean` (default: `false`). Disables the textarea.
+- `error`: `string` (default: `''`). Error message displayed below the textarea. When set, the border turns red and `aria-invalid` is applied.
+- `hint`: `string` (default: `''`). Hint text displayed below the textarea (hidden when `error` is set).
+- `id`: `string` (optional). Sets the `id` on the `<textarea>` and generates `id`-based references for `aria-describedby` on hint, error, and counter elements.
+- `label`: `string` (default: `''`). Label text displayed above the textarea. Rendered as uppercase, bold, muted text.
+- `maxLength`: `number` (optional). Maximum character count. When set and `showCounter` is true, a counter is displayed.
+- `resize`: `'none' | 'vertical' | 'horizontal' | 'both'` (default: `'vertical'`). Controls the CSS resize property.
+- `rows`: `number` (default: `4`). Number of visible text rows.
+- `showCounter`: `boolean` (default: `false`). Displays a `current/max` character counter when `maxLength` is set. Turns red when over limit.
+- `size`: `'sm' | 'md' | 'lg'` (default: `'md'`). Controls vertical padding and font size.
+- `textareaClass`: `string` (default: `''`). Additional CSS classes merged onto the `<textarea>` element itself.
+- `value`: `string` (bindable, default: `''`). The current textarea value. Use `bind:value` to read or set the value.
+- All additional `HTMLTextareaAttributes` are spread onto the `<textarea>` element (e.g., `placeholder`, `name`).
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+- **Danger**: `#e81123` (`text-jam-danger`, `border-jam-danger`)
+
+#### Variants Style mapping:
+
+**Textarea base class:**
+`w-full rounded-none border bg-jam-text px-4 font-bold font-jam-mono tracking-[0.06em] text-jam-bg outline-none transition-shadow duration-150 ease-out placeholder:text-jam-bg/25 hover:border-jam-bg/60 focus:border-jam-bg focus:shadow-[4px_4px_0_var(--color-jam-bg)] disabled:cursor-not-allowed disabled:border-jam-bg/15 disabled:bg-jam-text/40 disabled:text-jam-bg/30 disabled:placeholder:text-jam-bg/15`
+
+**Size classes:**
+- `sm`: `py-2 text-xs`
+- `md`: `py-3 text-sm`
+- `lg`: `py-4 text-base`
+
+**Resize classes:**
+- `none`: `resize-none`
+- `vertical`: `resize-y`
+- `horizontal`: `resize-x`
+- `both`: `resize`
+
+**Border variants:**
+- Default: `border-jam-bg/35`
+- Error: `border-jam-danger focus:border-jam-danger focus:shadow-[4px_4px_0_#e81123]`
+
+**Label:** `text-[10px] font-black uppercase tracking-[0.18em] text-jam-muted`
+
+**Error message:** `text-[11px] font-bold uppercase tracking-[0.1em] text-jam-danger` with `aria-live="polite"`
+
+**Hint message:** `text-[11px] font-medium tracking-[0.08em] text-jam-soft/70`
+
+**Counter:** `text-[11px] font-bold tracking-[0.08em]` — normal: `text-jam-soft/70`, over limit: `text-jam-danger` with `aria-live="polite"`
+
+---
+
+## Examples
+
+### Basic Textarea
+```svelte
+<script lang="ts">
+  import { Textarea } from 'jamui';
+</script>
+
+<Textarea label="Description" placeholder="Write a short description..." />
+```
+
+### Textarea with Character Counter
+```svelte
+<script lang="ts">
+  import { Textarea } from 'jamui';
+
+  let bio = $state('');
+</script>
+
+<Textarea
+  label="Bio"
+  bind:value={bio}
+  maxLength={200}
+  showCounter
+  placeholder="Tell us about yourself"
+/>
+```
+
+### Disabled Textarea with Error
+```svelte
+<script lang="ts">
+  import { Textarea } from 'jamui';
+</script>
+
+<Textarea
+  label="Notes"
+  value="This field is locked."
+  disabled
+  error="You do not have permission to edit this field"
+  rows={6}
+  resize="none"
+/>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `Tab`: Moves focus into and out of the textarea.
+  - Standard text editing keyboard shortcuts apply within the textarea.
+  - `Shift+Tab` allows moving focus back out of the textarea.
+- **ARIA attributes managed**:
+  - `aria-describedby` references the hint, error, and/or counter element IDs when present.
+  - `aria-invalid="true"` is applied when the `error` prop is set.
+  - `aria-live="polite"` on the error message and character counter for screen reader announcements.
+  - The entire component is wrapped in a `<label>` element, associating the label with the textarea implicitly.
+  - `maxlength` attribute is set on the `<textarea>` when `maxLength` prop is provided.

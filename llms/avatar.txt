@@ -1,0 +1,101 @@
+# JamUI — Avatar
+
+> A square, high-contrast avatar component with image loading, fallback rendering, and four size variants.
+
+## Avatar API & Usage Guide
+
+The JamUI Avatar is a self-contained Svelte 5 component for displaying user profile images or initials. It features automatic image error handling with graceful fallback to a custom snippet, four size variants, and the signature JamUI mono-font, uppercase, square-edge aesthetic. Uses `$state`, `$derived`, and `$props` runes. The component gracefully handles broken image URLs by switching to the fallback without user intervention.
+
+### Component Structure
+
+- `Avatar`: The root avatar container that renders an image or fallback content.
+
+---
+
+## Components API
+
+### Avatar.svelte
+
+The main avatar component. Renders an image if `src` is provided and loads successfully, otherwise renders the `fallback` snippet or an empty container with a background color.
+
+#### Props
+- `src`: `string` (optional). URL of the avatar image.
+- `alt`: `string` (default: `''`). Alt text for the image.
+- `fallback`: `Snippet` (optional). Custom fallback content rendered when the image is missing or fails to load.
+- `size`: `'sm' | 'md' | 'lg' | 'xl'` (default: `'md'`). Controls the avatar dimensions and font size.
+- `class`: `string` (default: `''`). Additional CSS classes merged with the base styles.
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Size Classes:
+- `sm`: `h-8 w-8 text-[10px] tracking-[0.12em]`
+- `md`: `h-10 w-10 text-[11px] tracking-[0.14em]`
+- `lg`: `h-12 w-12 text-xs tracking-[0.16em]`
+- `xl`: `h-16 w-16 text-sm tracking-[0.18em]`
+
+#### Base Styles:
+- Container: `relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-none border border-jam-text/15 font-jam-mono font-black uppercase`
+- Fallback background: `bg-jam-surface text-jam-muted`
+- Image: `absolute inset-0 h-full w-full object-cover`
+
+---
+
+## Examples
+
+### Basic Avatar with Image
+```svelte
+<script lang="ts">
+  import { Avatar } from 'jamui';
+</script>
+
+<Avatar src="/images/user.jpg" alt="User profile" />
+```
+
+### Avatar with Fallback
+```svelte
+<script lang="ts">
+  import { Avatar } from 'jamui';
+</script>
+
+<Avatar src="/images/broken-url.jpg" alt="User">
+  {#snippet fallback()}
+    <span>JD</span>
+  {/snippet}
+</Avatar>
+```
+
+### Avatar Sizes
+```svelte
+<script lang="ts">
+  import { Avatar } from 'jamui';
+</script>
+
+<div class="flex items-center gap-4">
+  <Avatar src="/images/user.jpg" alt="Small" size="sm" />
+  <Avatar src="/images/user.jpg" alt="Medium" size="md" />
+  <Avatar src="/images/user.jpg" alt="Large" size="lg" />
+  <Avatar src="/images/user.jpg" alt="Extra Large" size="xl" />
+</div>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - Avatar is a non-interactive element. No keyboard navigation required.
+- **ARIA attributes managed**:
+  - `alt` attribute on the `<img>` element for screen reader description.
+  - Decorative fallback content is rendered as a `<span>` inside the container.
+  - `border border-jam-text/15` provides visual separation from the background.

@@ -1,0 +1,102 @@
+# JamUI — Progress
+
+> A monospace, high-contrast progress bar component with size and color variants.
+
+## Progress API & Usage Guide
+
+The JamUI Progress is a Svelte 5 component that renders a horizontal progress bar with support for determinate and indeterminate states, multiple sizes, and color variants. It uses Svelte 5 Runes (`$state`, `$derived`, `$props`) and provides full WAI-ARIA compliance. The bar animates smoothly with CSS transitions and supports an indeterminate shimmer animation.
+
+### Component Structure
+
+- `Progress`: Standalone component. Renders a track with a filled bar (or indeterminate animation) and optional label/percentage display.
+
+---
+
+## Components API
+
+### Progress.svelte
+
+The progress bar component.
+
+#### Props
+- `class`: `string` (default: `''`). Additional CSS classes for the root wrapper div.
+- `label`: `string` (default: `''`). Text label displayed above the progress bar. Also used as the `aria-label` for the progressbar element.
+- `max`: `number` (default: `100`). Maximum value of the progress range.
+- `size`: `'sm' | 'md' | 'lg'` (default: `'md'`). Controls the height of the progress bar track.
+- `value`: `number` (default: `0`). Current value of the progress. When `null` or `undefined`, renders an indeterminate animation.
+- `variant`: `'default' | 'success' | 'warning' | 'danger'` (default: `'default'`). Color variant for the filled portion of the bar.
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Variants Style mapping:
+- **default**: `bg-jam-text` — white fill bar.
+- **success**: `bg-[#22c55e]` — green fill bar.
+- **warning**: `bg-[#f59e0b]` — amber fill bar.
+- **danger**: `bg-jam-danger` — danger red fill bar.
+
+#### Size mapping:
+- **sm**: `h-1.5` — thin bar.
+- **md**: `h-2.5` — medium bar.
+- **lg**: `h-4` — thick bar.
+
+#### Track styling:
+- Track background: `bg-jam-surface`.
+- Indeterminate animation: `animate-progress-indeterminate` — a shimmer that translates left-to-right infinitely over 1.5s.
+- Label text: `text-[10px] font-black uppercase tracking-[0.18em] text-jam-muted`.
+
+---
+
+## Examples
+
+### Basic Determinate Progress
+```svelte
+<script lang="ts">
+  import { Progress } from 'jamui';
+</script>
+
+<Progress label="Upload" value={65} max={100} />
+```
+
+### Size and Variant Variants
+```svelte
+<script lang="ts">
+  import { Progress } from 'jamui';
+</script>
+
+<Progress label="Small Success" value={100} size="sm" variant="success" />
+<Progress label="Medium Warning" value={45} size="md" variant="warning" />
+<Progress label="Large Danger" value={20} size="lg" variant="danger" />
+```
+
+### Indeterminate Progress
+```svelte
+<script lang="ts">
+  import { Progress } from 'jamui';
+</script>
+
+<Progress label="Loading..." size="md" />
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - This is a static display component; no keyboard interaction is required.
+- **ARIA attributes managed**:
+  - `role="progressbar"` on the track element.
+  - `aria-valuenow` set to the clamped value (omitted for indeterminate state).
+  - `aria-valuemax` set to the `max` prop.
+  - `aria-valuemin` set to `0`.
+  - `aria-label` set to the `label` prop, or defaults to `'Progresso'`.

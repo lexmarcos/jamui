@@ -1,0 +1,232 @@
+# JamUI — Table
+
+> A monospace, high-contrast, fully accessible table component library for Svelte 5 (using Runes) and styled with Tailwind CSS.
+
+## Table API & Usage Guide
+
+The JamUI Table is a set of Svelte components that build accessible, styled data tables. It uses Svelte 5 Runes (`$state`, `$derived`, `$props`) and context-based state management to propagate `size` and `striped` settings to all child components. The table supports multiple density sizes and striped row styling.
+
+### Component Structure
+
+- `Table`: Root container that renders the `<table>` element and provides context to children.
+- `TableHead`: Wraps `<thead>` with a bottom border separator.
+- `TableBody`: Wraps `<tbody>` for grouping body rows.
+- `TableRow`: Renders individual `<tr>` elements with hover and optional stripe styling.
+- `TableHeader`: Renders `<th>` header cells with uppercase, muted, bold text.
+- `TableCell`: Renders `<td>` data cells with monospace font and tracking.
+- `TableCaption`: Renders a `<caption>` element for table description.
+
+---
+
+## Components API
+
+### Table.svelte
+
+Root wrapper component that sets the table context and renders the `<table>` element inside a scrollable container.
+
+#### Props
+- `children`: `Snippet` (optional). Child content rendered inside the table.
+- `class`: `string` (default: `''`). Additional CSS classes to merge onto the `<table>` element.
+- `size`: `'md' | 'sm' | 'compact'` (default: `'md'`). Controls padding and row height across all child components via context.
+- `striped`: `boolean` (default: `false`). Enables alternating row background shading via context.
+
+---
+
+### TableHead.svelte
+
+Wraps the `<thead>` section with a thick bottom border.
+
+#### Props
+- `children`: `Snippet` (optional). Child content (typically `TableHeader` cells).
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### TableBody.svelte
+
+Wraps the `<tbody>` section for grouping data rows.
+
+#### Props
+- `children`: `Snippet` (optional). Child content (typically `TableRow` elements).
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### TableRow.svelte
+
+Renders a `<tr>` element with dynamic height based on context size and optional striped background.
+
+#### Props
+- `children`: `Snippet` (optional). Child cells.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### TableHeader.svelte
+
+Renders a `<th>` header cell with uppercase, bold, muted text styling.
+
+#### Props
+- `children`: `Snippet` (optional). Header label content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### TableCell.svelte
+
+Renders a `<td>` data cell with monospace font and letter-spacing.
+
+#### Props
+- `children`: `Snippet` (optional). Cell data content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### TableCaption.svelte
+
+Renders a `<caption>` element positioned above the table.
+
+#### Props
+- `children`: `Snippet` (optional). Caption text.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Variants Style mapping:
+
+**Size classes (context-driven):**
+- `compact`: Row height `h-8`, cell padding `px-2 py-1`
+- `sm`: Row height `h-10`, cell padding `px-3 py-2`
+- `md`: Row height `h-12`, cell padding `px-4 py-3`
+
+**Row styling:**
+- `border-b border-jam-text/10` — bottom border on all rows
+- `hover:bg-jam-text/10` — hover highlight
+- `even:bg-jam-text/5` — striped row background (when `striped=true`)
+
+**Header cell styling:** `text-[10px] font-black uppercase tracking-[0.18em] text-jam-muted`
+
+**Data cell styling:** `text-xs font-medium tracking-[0.06em] text-jam-text`
+
+**Caption styling:** `caption-top mb-3 text-left text-[10px] font-black uppercase tracking-[0.18em] text-jam-muted`
+
+**Table head border:** `border-b-2 border-jam-text/40`
+
+---
+
+## Examples
+
+### Basic Table with Striped Rows
+```svelte
+<script lang="ts">
+  import { Table, TableHead, TableBody, TableRow, TableHeader, TableCell } from 'jamui';
+</script>
+
+<Table striped>
+  <TableHead>
+    <TableRow>
+      <TableHeader>Name</TableHeader>
+      <TableHeader>Status</TableHeader>
+      <TableHeader>Role</TableHeader>
+    </TableRow>
+  </TableHead>
+  <TableBody>
+    <TableRow>
+      <TableCell>Alice</TableCell>
+      <TableCell>Active</TableCell>
+      <TableCell>Admin</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Bob</TableCell>
+      <TableCell>Inactive</TableCell>
+      <TableCell>Editor</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+```
+
+### Compact Table with Caption
+```svelte
+<script lang="ts">
+  import { Table, TableHead, TableBody, TableRow, TableHeader, TableCell, TableCaption } from 'jamui';
+</script>
+
+<Table size="compact">
+  <TableCaption>User Directory</TableCaption>
+  <TableHead>
+    <TableRow>
+      <TableHeader>ID</TableHeader>
+      <TableHeader>Email</TableHeader>
+      <TableHeader>Team</TableHeader>
+    </TableRow>
+  </TableHead>
+  <TableBody>
+    <TableRow>
+      <TableCell>001</TableCell>
+      <TableCell>alice@example.com</TableCell>
+      <TableCell>Platform</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>002</TableCell>
+      <TableCell>bob@example.com</TableCell>
+      <TableCell>Design</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+```
+
+### Small Table with Custom Styling
+```svelte
+<script lang="ts">
+  import { Table, TableHead, TableBody, TableRow, TableHeader, TableCell, TableCaption } from 'jamui';
+</script>
+
+<Table size="sm" class="max-w-lg">
+  <TableCaption>Recent Deployments</TableCaption>
+  <TableHead>
+    <TableRow>
+      <TableHeader>Service</TableHeader>
+      <TableHeader>Version</TableHeader>
+      <TableHeader>Date</TableHeader>
+    </TableRow>
+  </TableHead>
+  <TableBody>
+    <TableRow>
+      <TableCell>api-gateway</TableCell>
+      <TableCell>v2.4.1</TableCell>
+      <TableCell>2026-05-28</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>auth-service</TableCell>
+      <TableCell>v1.8.0</TableCell>
+      <TableCell>2026-05-27</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>worker</TableCell>
+      <TableCell>v3.1.2</TableCell>
+      <TableCell>2026-05-26</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - Standard `<table>` navigation applies — cells are navigable via arrow keys and Tab.
+- **ARIA attributes managed**:
+  - Native `<table>`, `<thead>`, `<tbody>`, `<tr>`, `<th>`, `<td>`, and `<caption>` elements provide implicit semantic structure.
+  - `TableCaption` renders as a `<caption>` element, providing an accessible table title.

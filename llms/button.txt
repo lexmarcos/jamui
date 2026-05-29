@@ -1,0 +1,114 @@
+# JamUI — Button
+
+> A monospace, high-contrast, fully accessible button component for Svelte 5 (using Runes) and styled with Tailwind CSS.
+
+## Button API & Usage Guide
+
+The JamUI Button is a single Svelte component that renders a styled `<button>` element. It uses Svelte 5 Runes (`$props`, `$derived`, `$effect`, `$state`) for reactive state management and supports four visual variants and three sizes. All buttons use the JamUI sharp, mono, uppercase aesthetic with hard hover shadows.
+
+### Component Structure
+
+- `Button`: A standalone button element with variant and size controls. No sub-components needed.
+
+---
+
+## Components API
+
+### Button.svelte
+
+The primary button component. Renders a `<button>` with JamUI styling.
+
+#### Props
+- `children`: `Snippet` (optional). The button label content.
+- `class`: `string` (default: `''`). Additional CSS classes appended to the computed class list.
+- `disabled`: `boolean` (default: `false`). Disables the button, preventing interaction and applying muted styles.
+- `ref`: `(node: HTMLButtonElement | null) => void` (optional). Callback to receive a reference to the underlying `<button>` DOM element.
+- `size`: `'sm' | 'md' | 'lg'` (default: `'md'`). Controls button height, padding, font size, and letter spacing.
+- `type`: `'button' | 'submit' | 'reset'` (default: `'button'`). The HTML button type attribute.
+- `variant`: `'primary' | 'secondary' | 'ghost' | 'danger'` (default: `'primary'`). Visual style variant.
+- Plus all standard `HTMLButtonAttributes` props (spread onto `<button>`).
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Danger**: `#e81123` (`bg-jam-danger`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Base class (all variants):
+`inline-flex min-w-0 cursor-pointer items-center justify-center rounded-none border font-black uppercase transition-all duration-150 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-jam-text focus-visible:ring-offset-2 focus-visible:ring-offset-jam-bg disabled:pointer-events-none disabled:cursor-not-allowed disabled:shadow-none disabled:active:shadow-none`
+
+#### Size variants:
+- `sm`: `min-h-9 px-3 text-[10px] tracking-[0.22em]`
+- `md`: `min-h-12 px-4 text-xs tracking-[0.2em]`
+- `lg`: `min-h-14 px-5 text-sm tracking-[0.24em]`
+
+#### Style variants:
+- `primary`: `border-jam-text bg-jam-text text-jam-bg hover:shadow-jam-hard-md active:shadow-none active:bg-jam-muted disabled:border-jam-text/20 disabled:bg-jam-text/15 disabled:text-jam-text/40`
+- `secondary`: `border-jam-text/40 bg-jam-surface text-jam-text hover:border-jam-text hover:bg-jam-text hover:text-jam-bg hover:shadow-jam-hard-sm active:shadow-none active:bg-jam-muted active:text-jam-bg disabled:border-jam-text/20 disabled:bg-jam-surface/30 disabled:text-jam-text/30`
+- `ghost`: `border-jam-text/25 bg-transparent text-jam-muted hover:border-jam-text hover:bg-jam-text/10 hover:text-jam-text hover:shadow-jam-hard-sm active:shadow-none active:bg-jam-text/15 disabled:border-jam-text/15 disabled:bg-transparent disabled:text-jam-text/20`
+- `danger`: `border-jam-danger bg-jam-danger text-jam-text hover:shadow-[8px_8px_0_rgba(232,17,35,0.35)] active:shadow-none active:bg-[#c00f1b] disabled:border-jam-danger/25 disabled:bg-jam-danger/15 disabled:text-jam-text/40`
+
+---
+
+## Examples
+
+### Primary Button (default)
+```svelte
+<script lang="ts">
+  import { Button } from 'jamui';
+</script>
+
+<Button>Submit</Button>
+```
+
+### Button Sizes and Variants
+```svelte
+<script lang="ts">
+  import { Button } from 'jamui';
+</script>
+
+<Button size="sm" variant="secondary">Small Secondary</Button>
+<Button size="md" variant="primary">Medium Primary</Button>
+<Button size="lg" variant="ghost">Large Ghost</Button>
+```
+
+### Danger Button
+```svelte
+<script lang="ts">
+  import { Button } from 'jamui';
+</script>
+
+<Button variant="danger" disabled>Delete Item</Button>
+```
+
+### Button with ref callback
+```svelte
+<script lang="ts">
+  import { Button } from 'jamui';
+
+  function handleRef(node: HTMLButtonElement | null) {
+    if (node) node.focus();
+  }
+</script>
+
+<Button ref={handleRef}>Focus Me</Button>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `Tab`: Moves focus to/from the button.
+  - `Enter` / `Space`: Activates the button.
+- **ARIA attributes managed**:
+  - `disabled` attribute applied when `disabled` is true, removing the element from tab order.
+  - Focus ring: `focus-visible:ring-2 focus-visible:ring-jam-text focus-visible:ring-offset-2 focus-visible:ring-offset-jam-bg` provides a visible focus indicator for keyboard users.

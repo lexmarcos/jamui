@@ -1,0 +1,254 @@
+# JamUI — Dialog
+
+> A monospace, high-contrast, fully accessible modal dialog component for Svelte 5 (using Runes) and styled with Tailwind CSS.
+
+## Dialog API & Usage Guide
+
+The JamUI Dialog is a set of Svelte components that build an accessible modal dialog. It uses Svelte 5 Runes (`$state`, `$derived`, `$props`, `$bindable`, `$effect`, `untrack`) and context-based state management. The Dialog supports controlled and uncontrolled modes, multiple sizes, focus trapping, overlay click-to-close, and full keyboard accessibility. It renders a modal overlay with a centered content panel, supporting optional title/description for ARIA compliance.
+
+### Component Structure
+
+- `Dialog`: Root container that holds state and context.
+- `DialogTrigger`: Button that opens the dialog.
+- `DialogPortal`: Wrapper that conditionally renders children based on open state.
+- `DialogOverlay`: The semi-transparent backdrop overlay.
+- `DialogContent`: The main dialog panel containing all visible content.
+- `DialogHeader`: Flex container for the title and description section.
+- `DialogTitle`: The heading of the dialog (renders `<h2>`).
+- `DialogDescription`: Descriptive text below the title.
+- `DialogFooter`: Flex container for action buttons at the bottom.
+- `DialogClose`: Button that closes the dialog.
+
+---
+
+## Components API
+
+### Dialog.svelte
+
+Root wrapper component. Provides dialog state to all child components via Svelte context.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `open`: `boolean` (bindable, optional). Controlled open state. When provided, the dialog operates in controlled mode.
+- `defaultOpen`: `boolean` (default: `false`). Initial open state for uncontrolled mode.
+- `onOpenChange`: `(open: boolean) => void` (optional). Callback fired when the open state changes.
+- `modal`: `boolean` (default: `true`). If `true`, sets `aria-modal="true"` on the content panel.
+
+---
+
+### DialogTrigger.svelte
+
+Button that opens the dialog when clicked.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `child`: `Snippet<[{ props: DialogButtonChildProps }]>` (optional). Custom render function for `asChild` mode.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- `asChild`: `boolean` (default: `false`). If `true`, renders via `child` snippet instead of a `<button>`.
+- Plus all standard `HTMLButtonAttributes`.
+
+---
+
+### DialogPortal.svelte
+
+Conditionally renders children only when the dialog is open.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+
+---
+
+### DialogOverlay.svelte
+
+Semi-transparent backdrop that sits behind the dialog content.
+
+#### Props
+- `class`: `string` (default: `''`). Additional CSS classes.
+- Plus all standard `HTMLAttributes<HTMLDivElement>`.
+
+---
+
+### DialogContent.svelte
+
+The main dialog panel. Handles focus trapping, keyboard navigation, and animation.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- `size`: `'sm' | 'md' | 'lg' | 'xl' | 'full'` (default: `'md'`). Controls the max-width of the dialog panel.
+- `closeOnOverlayClick`: `boolean` (default: `true`). If `true`, clicking the overlay closes the dialog.
+- Plus all standard `HTMLAttributes<HTMLDivElement>`.
+
+#### Size Classes
+- `sm`: `max-w-sm`
+- `md`: `max-w-md`
+- `lg`: `max-w-lg`
+- `xl`: `max-w-xl`
+- `full`: `max-w-full h-full`
+
+---
+
+### DialogHeader.svelte
+
+Flex container for the title and description section.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- Plus all standard `HTMLAttributes<HTMLDivElement>`.
+
+---
+
+### DialogTitle.svelte
+
+The heading of the dialog. Automatically registers its ID with the dialog context for `aria-labelledby`.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- Plus all standard `HTMLAttributes<HTMLHeadingElement>`.
+
+---
+
+### DialogDescription.svelte
+
+Descriptive text below the title. Automatically registers its ID with the dialog context for `aria-describedby`.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- Plus all standard `HTMLAttributes<HTMLParagraphElement>`.
+
+---
+
+### DialogFooter.svelte
+
+Flex container for action buttons at the bottom of the dialog.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- Plus all standard `HTMLAttributes<HTMLDivElement>`.
+
+---
+
+### DialogClose.svelte
+
+Button that closes the dialog when clicked.
+
+#### Props
+- `children`: `Snippet` (optional). Child content.
+- `child`: `Snippet<[{ props: DialogButtonChildProps }]>` (optional). Custom render function for `asChild` mode.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- `asChild`: `boolean` (default: `false`). If `true`, renders via `child` snippet instead of a `<button>`.
+- Plus all standard `HTMLButtonAttributes`.
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Component Default Styles:
+
+- **DialogOverlay**: `fixed inset-0 z-50 bg-jam-bg/80 transition-opacity duration-200 ease-out`
+- **DialogContent**: `fixed inset-x-4 top-1/2 z-[51] mx-auto w-full -translate-y-1/2 border border-jam-bg/15 bg-jam-text p-6 shadow-jam-hard-blue-md transition-all duration-200 ease-out`
+- **DialogHeader**: `flex flex-col gap-1`
+- **DialogTitle**: `text-[11px] font-black uppercase tracking-[0.18em] text-jam-bg`
+- **DialogDescription**: `text-xs font-medium leading-relaxed text-jam-bg/75`
+- **DialogFooter**: `mt-4 flex justify-end gap-3`
+- **DialogClose**: `inline-flex min-h-11 cursor-pointer items-center justify-center rounded-none border border-jam-bg/25 bg-transparent px-4 font-black uppercase tracking-[0.2em] text-jam-bg text-xs transition-all duration-150 ease-out hover:border-jam-bg hover:bg-jam-bg/10 hover:shadow-jam-hard-blue-sm active:shadow-none active:bg-jam-bg/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-jam-bg focus-visible:ring-offset-2 focus-visible:ring-offset-jam-text`
+
+#### Animation State Classes:
+
+- **Overlay visible**: `opacity-100`
+- **Overlay hidden**: `opacity-0 pointer-events-none`
+- **Panel visible**: `opacity-100 scale-100`
+- **Panel hidden**: `opacity-0 scale-95 pointer-events-none`
+
+---
+
+## Examples
+
+### Basic Uncontrolled Dialog
+```svelte
+<script lang="ts">
+  import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from 'jamui';
+</script>
+
+<Dialog>
+  <DialogTrigger class="bg-jam-text text-jam-bg px-4 py-2 font-bold uppercase">Open Dialog</DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Confirm Action</DialogTitle>
+      <DialogDescription>Are you sure you want to proceed?</DialogDescription>
+    </DialogHeader>
+    <DialogFooter>
+      <DialogClose class="bg-transparent border border-jam-bg/25 text-jam-bg">Cancel</DialogClose>
+      <button class="bg-jam-bg text-jam-text px-4 py-2 font-bold uppercase">Confirm</button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+```
+
+### Controlled Dialog with Size
+```svelte
+<script lang="ts">
+  import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from 'jamui';
+
+  let open = $state(false);
+</script>
+
+<Dialog bind:open={open} onOpenChange={(v) => console.log('Open changed:', v)}>
+  <DialogTrigger class="bg-jam-text text-jam-bg px-4 py-2 font-bold uppercase">Open Large Dialog</DialogTrigger>
+  <DialogContent size="lg">
+    <DialogHeader>
+      <DialogTitle>Large Dialog</DialogTitle>
+      <DialogDescription>This dialog uses the large size variant.</DialogDescription>
+    </DialogHeader>
+    <p class="text-sm text-jam-bg/75">Dialog content goes here.</p>
+    <DialogFooter>
+      <DialogClose>Close</DialogClose>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+```
+
+### Non-Modal Dialog
+```svelte
+<script lang="ts">
+  import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from 'jamui';
+</script>
+
+<Dialog modal={false}>
+  <DialogTrigger class="bg-jam-text text-jam-bg px-4 py-2 font-bold uppercase">Open Non-Modal</DialogTrigger>
+  <DialogContent closeOnOverlayClick={false}>
+    <DialogHeader>
+      <DialogTitle>Non-Modal Dialog</DialogTitle>
+    </DialogHeader>
+    <p class="text-sm text-jam-bg/75">This dialog does not block interaction with the page behind it.</p>
+  </DialogContent>
+</Dialog>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `Escape`: Closes the dialog. Prevents default and stops propagation.
+  - `Tab`: Traps focus within the dialog. Moves focus to the next focusable element. When on the last element, wraps to the first. With `Shift+Tab`, wraps from the first to the last.
+- **ARIA attributes managed**:
+  - `role="dialog"` on the content panel.
+  - `aria-modal="true"` on the content panel when `modal` is `true`.
+  - `aria-labelledby` on the content panel, linked to the `DialogTitle` ID.
+  - `aria-describedby` on the content panel, linked to the `DialogDescription` ID.
+  - `aria-hidden="true"` on the overlay.
+- **Focus management**: On open, focus moves to the first focusable element inside the content panel (or the panel itself). On close, focus returns to the element that was focused before the dialog opened.

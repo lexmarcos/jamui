@@ -1,0 +1,125 @@
+# JamUI — Tooltip
+
+> A monospace, high-contrast, fully accessible tooltip component for Svelte 5 (using Runes) and styled with Tailwind CSS.
+
+## Tooltip API & Usage Guide
+
+The JamUI Tooltip is a Svelte 5 component that renders a positioned tooltip on hover or focus of its child content. It uses Svelte 5 Runes (`$state`, `$props`) for visibility management and supports four positions (top, bottom, left, right) with a directional arrow. The tooltip uses the inverted JamUI color scheme (white background, blue text) with a hard shadow.
+
+### Component Structure
+
+- `Tooltip`: A self-contained tooltip wrapper that manages hover/focus visibility and positions the tooltip content relative to its children.
+
+---
+
+## Components API
+
+### Tooltip.svelte
+
+A tooltip wrapper that shows content on hover or focus of its children.
+
+#### Props
+- `children`: `Snippet` (optional). The trigger element(s) that the tooltip attaches to.
+- `class`: `string` (default: `''`). Additional CSS classes on the outer `<div>` wrapper.
+- `content`: `string` (required). The tooltip text content to display.
+- `position`: `'top' | 'bottom' | 'left' | 'right'` (default: `'top'`). Controls where the tooltip appears relative to the trigger.
+- All additional `HTMLAttributes<HTMLDivElement>` are spread onto the wrapper `<div>`.
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Variants Style mapping:
+
+**Tooltip box:**
+`absolute z-50 w-max max-w-[16rem] border border-jam-bg/15 bg-jam-text px-2.5 py-1.5 text-[10px] font-bold font-jam-mono uppercase tracking-[0.12em] text-jam-bg shadow-jam-hard-blue-sm`
+
+**Position classes:**
+- `top`: `bottom-full left-1/2 -translate-x-1/2 mb-2`
+- `bottom`: `top-full left-1/2 -translate-x-1/2 mt-2`
+- `left`: `right-full top-1/2 -translate-y-1/2 mr-2`
+- `right`: `left-full top-1/2 -translate-y-1/2 ml-2`
+
+**Arrow classes (CSS triangles):**
+- `top`: `top-full left-1/2 -translate-x-1/2 border-t-jam-text`
+- `bottom`: `bottom-full left-1/2 -translate-x-1/2 border-b-jam-text`
+- `left`: `left-full top-1/2 -translate-y-1/2 border-l-jam-text`
+- `right`: `right-full top-1/2 -translate-y-1/2 border-r-jam-text`
+
+Arrow is rendered as `<span class="absolute h-0 w-0 border-4 border-transparent {arrowClass[position]}" aria-hidden="true"></span>`.
+
+---
+
+## Examples
+
+### Basic Tooltip
+```svelte
+<script lang="ts">
+  import { Tooltip } from 'jamui';
+  import Info from 'lucide-svelte/icons/info';
+</script>
+
+<Tooltip content="This action cannot be undone.">
+  <Info size={16} />
+</Tooltip>
+```
+
+### Tooltip on a Button
+```svelte
+<script lang="ts">
+  import { Tooltip } from 'jamui';
+</script>
+
+<Tooltip content="Save your changes" position="bottom">
+  <button class="bg-jam-text text-jam-bg px-4 py-2 text-xs font-black uppercase">
+    Save
+  </button>
+</Tooltip>
+```
+
+### Tooltips in Different Positions
+```svelte
+<script lang="ts">
+  import { Tooltip } from 'jamui';
+</script>
+
+<div class="flex gap-8">
+  <Tooltip content="Top tooltip" position="top">
+    <span class="text-jam-muted text-xs">Top</span>
+  </Tooltip>
+
+  <Tooltip content="Right tooltip" position="right">
+    <span class="text-jam-muted text-xs">Right</span>
+  </Tooltip>
+
+  <Tooltip content="Bottom tooltip" position="bottom">
+    <span class="text-jam-muted text-xs">Bottom</span>
+  </Tooltip>
+
+  <Tooltip content="Left tooltip" position="left">
+    <span class="text-jam-muted text-xs">Left</span>
+  </Tooltip>
+</div>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `Tab`: Focuses the trigger element, showing the tooltip.
+  - `Escape`: No explicit handler — tooltip hides on `focusout` when focus leaves the trigger and tooltip.
+  - Arrow keys navigate within the trigger element if it is focusable.
+- **ARIA attributes managed**:
+  - `role="tooltip"` on the tooltip content container.
+  - `aria-hidden="true"` on the decorative arrow element.
+  - Tooltip visibility is tied to `mouseenter`/`mouseleave` and `focusin`/`focusout` events on the wrapper, ensuring keyboard users can access tooltip content.

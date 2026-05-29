@@ -1,0 +1,193 @@
+# JamUI — Tabs
+
+> A monospace, high-contrast, fully accessible tabbed interface component library for Svelte 5 (using Runes) and styled with Tailwind CSS.
+
+## Tabs API & Usage Guide
+
+The JamUI Tabs is a set of Svelte components that build an accessible tabbed interface. It uses Svelte 5 Runes (`$state`, `$derived`, `$props`, `$bindable`) and context-based state management to coordinate active tab state, variant, orientation, and size across all child components. Supports both horizontal and vertical orientations with two visual variants.
+
+### Component Structure
+
+- `TabGroup`: Root container that holds the active tab state and provides context.
+- `TabList`: The tab strip container with `role="tablist"`.
+- `TabTrigger`: Individual tab button that activates its associated panel.
+- `TabPanel`: The content panel displayed when its matching tab is active.
+
+---
+
+## Components API
+
+### TabGroup.svelte
+
+Root wrapper component that manages the active tab state and distributes context to children.
+
+#### Props
+- `children`: `Snippet` (optional). Child content (typically `TabList` and `TabPanel` components).
+- `class`: `string` (default: `''`). Additional CSS classes on the wrapper `<div>`.
+- `orientation`: `'horizontal' | 'vertical'` (default: `'horizontal'`). Layout direction. When vertical, the wrapper uses flex and `TabList` renders a vertical border.
+- `size`: `'md' | 'sm'` (default: `'md'`). Controls tab trigger size and padding via context.
+- `value`: `string` (bindable, default: `''`). The currently active tab value. Use `bind:value` to control externally.
+- `variant`: `'default' | 'line'` (default: `'default'`). Visual style variant distributed to all triggers via context.
+
+---
+
+### TabList.svelte
+
+The tab strip container that holds tab triggers. Must be a child of `TabGroup`.
+
+#### Props
+- `children`: `Snippet` (optional). Child `TabTrigger` components.
+- `class`: `string` (default: `''`). Additional CSS classes.
+
+---
+
+### TabTrigger.svelte
+
+An individual tab button. Must be a child of `TabList` inside `TabGroup`.
+
+#### Props
+- `children`: `Snippet` (optional). Tab label content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- `value`: `string` (required). Unique identifier for this tab. Must match the corresponding `TabPanel` value.
+
+---
+
+### TabPanel.svelte
+
+The content panel displayed when its matching tab is active. Must be a child of `TabGroup`.
+
+#### Props
+- `children`: `Snippet` (optional). Panel content.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- `value`: `string` (required). Unique identifier that links this panel to its corresponding `TabTrigger`.
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Variants Style mapping:
+
+**TabTrigger sizes:**
+- `sm`: `min-h-8 px-3 text-[10px] tracking-[0.16em]`
+- `md`: `min-h-10 px-4 text-xs tracking-[0.18em]`
+
+**Base trigger class:** `relative flex cursor-pointer select-none items-center justify-center gap-1.5 font-black uppercase outline-none transition-all duration-150 ease-out focus-visible:ring-2 focus-visible:ring-jam-text focus-visible:ring-offset-2 focus-visible:ring-offset-jam-bg`
+
+**`default` variant (horizontal):**
+- Active: `border-b-2 border-jam-text bg-jam-text text-jam-bg shadow-jam-hard-sm`
+- Inactive: `border-b-2 border-transparent bg-transparent text-jam-muted hover:border-jam-text/30 hover:bg-jam-text/5 hover:text-jam-text`
+
+**`default` variant (vertical):**
+- Active: `border-r-2 border-jam-text bg-jam-text text-jam-bg shadow-jam-hard-sm`
+- Inactive: `border-r-2 border-transparent bg-transparent text-jam-muted hover:border-jam-text/30 hover:bg-jam-text/5 hover:text-jam-text`
+
+**`line` variant (horizontal):**
+- Active: `border-b-2 border-jam-text bg-transparent text-jam-text`
+- Inactive: `border-b-2 border-transparent bg-transparent text-jam-muted hover:border-jam-text/30 hover:text-jam-text`
+
+**`line` variant (vertical):**
+- Active: `border-r-2 border-jam-text bg-jam-text/5 text-jam-text`
+- Inactive: `border-r-2 border-transparent bg-transparent text-jam-muted hover:border-jam-text/30 hover:text-jam-text`
+
+**TabList:**
+- Horizontal: `flex-row border-b border-jam-bg/15`
+- Vertical: `flex-col border-r border-jam-bg/15`
+
+**TabPanel:** `p-4`
+
+---
+
+## Examples
+
+### Basic Horizontal Tabs
+```svelte
+<script lang="ts">
+  import { TabGroup, TabList, TabTrigger, TabPanel } from 'jamui';
+</script>
+
+<TabGroup value="tab-1">
+  <TabList>
+    <TabTrigger value="tab-1">Overview</TabTrigger>
+    <TabTrigger value="tab-2">Settings</TabTrigger>
+    <TabTrigger value="tab-3">Logs</TabTrigger>
+  </TabList>
+
+  <TabPanel value="tab-1">
+    <p>Overview content goes here.</p>
+  </TabPanel>
+  <TabPanel value="tab-2">
+    <p>Settings panel content.</p>
+  </TabPanel>
+  <TabPanel value="tab-3">
+    <p>Log viewer content.</p>
+  </TabPanel>
+</TabGroup>
+```
+
+### Vertical Tabs with Line Variant
+```svelte
+<script lang="ts">
+  import { TabGroup, TabList, TabTrigger, TabPanel } from 'jamui';
+</script>
+
+<TabGroup orientation="vertical" variant="line" value="general">
+  <TabList>
+    <TabTrigger value="general">General</TabTrigger>
+    <TabTrigger value="security">Security</TabTrigger>
+    <TabTrigger value="billing">Billing</TabTrigger>
+  </TabList>
+
+  <TabPanel value="general">General settings content.</TabPanel>
+  <TabPanel value="security">Security settings content.</TabPanel>
+  <TabPanel value="billing">Billing settings content.</TabPanel>
+</TabGroup>
+```
+
+### Controlled Small Tabs
+```svelte
+<script lang="ts">
+  import { TabGroup, TabList, TabTrigger, TabPanel } from 'jamui';
+
+  let active = $state('dashboard');
+</script>
+
+<TabGroup bind:value={active} size="sm" variant="default">
+  <TabList>
+    <TabTrigger value="dashboard">Dashboard</TabTrigger>
+    <TabTrigger value="analytics">Analytics</TabTrigger>
+    <TabTrigger value="reports">Reports</TabTrigger>
+  </TabList>
+
+  <TabPanel value="dashboard">Dashboard view.</TabPanel>
+  <TabPanel value="analytics">Analytics view.</TabPanel>
+  <TabPanel value="reports">Reports view.</TabPanel>
+</TabGroup>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `ArrowRight` / `ArrowDown`: Moves focus to the next tab trigger.
+  - `ArrowLeft` / `ArrowUp`: Moves focus to the previous tab trigger.
+  - `Home`: Moves focus to the first tab trigger.
+  - `End`: Moves focus to the last tab trigger.
+  - `Enter` / `Space`: Activates the focused tab.
+  - Tab key moves focus from the active trigger into the tab panel.
+- **ARIA attributes managed**:
+  - `role="tablist"` on `TabList` container.
+  - `role="tab"` on each `TabTrigger` button.
+  - `aria-selected` set to `true` on the active trigger, `false` on inactive.
+  - `tabindex={0}` on the active trigger, `tabindex={-1}` on inactive triggers (roving tabindex pattern).
+  - `role="tabpanel"` on each `TabPanel`.
+  - `tabindex={0}` on each `TabPanel` for keyboard focus.

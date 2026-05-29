@@ -1,0 +1,129 @@
+# JamUI — Combobox
+
+> A monospace, high-contrast combobox component with typeahead search, keyboard navigation, and accessible ARIA patterns for Svelte 5.
+
+## Combobox API & Usage Guide
+
+The JamUI Combobox is a single-file Svelte 5 component that implements a filterable, keyboard-navigable combobox input. It uses Svelte 5 Runes (`$state`, `$derived`, `$effect`, `$props`, `$bindable`) for all internal state management. Users type into the input field, and a dropdown listbox filters and displays matching options in real time. The component is fully accessible with proper ARIA roles and manages its own open/close state, active descendant tracking, and value commitment.
+
+### Component Structure
+
+- `Combobox`: The entire combobox widget — a single self-contained component including the label, input field, filterable dropdown listbox, and error/hint messages.
+
+---
+
+## Components API
+
+### Combobox.svelte
+
+A self-contained combobox input with a filterable dropdown listbox. Renders an `<input>` with `role="combobox"` and a dynamically positioned `<div>` with `role="listbox"` containing filtered options.
+
+#### Props
+- `class`: `string` (default: `''`). Additional CSS classes applied to the root container element.
+- `disabled`: `boolean` (default: `false`). Disables the input and prevents all interactions.
+- `error`: `string` (default: `''`). Error message displayed below the input. When set, the input border turns danger-colored and `aria-invalid="true"` is applied.
+- `hint`: `string` (default: `''`). Hint/helper text displayed below the input when no error is present.
+- `id`: `string` (default: auto-generated). Unique ID for the input element. Used to derive label, listbox, hint, and error IDs for ARIA relationships.
+- `label`: `string` (default: `''`). Visible label text rendered above the input.
+- `options`: `string[]` (required). The list of available options to filter and select from.
+- `placeholder`: `string` (default: `'Digite para buscar...'`). Placeholder text for the input field.
+- `size`: `'sm' | 'md' | 'lg'` (default: `'md'`). Controls the input height and font size.
+  - `sm`: `min-h-9 px-3 text-[10px]`
+  - `md`: `min-h-12 px-4 text-xs`
+  - `lg`: `min-h-14 px-5 text-sm`
+- `value`: `string` (bindable, default: `''`). The currently selected value. Two-way bindable.
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Variants Style mapping:
+- **Input field**: White background (`bg-jam-text`), blue text (`text-jam-bg`), square edges, no border radius. Default border is `border-jam-bg/35`, hover is `border-jam-bg/60`, focus is `border-jam-bg` with `shadow-[4px_4px_0_var(--color-jam-bg)]`.
+- **Error state**: Border turns `border-jam-danger`, focus shadow becomes `shadow-[4px_4px_0_#e81123]`.
+- **Disabled state**: `border-jam-bg/15 bg-jam-text/40 text-jam-bg/30 cursor-not-allowed`.
+- **Dropdown listbox**: White background (`bg-jam-text`), border `border-jam-bg/15`, hard blue shadow `shadow-jam-hard-blue-sm`.
+- **Dropdown option (active/selected)**: `bg-jam-bg text-jam-text`.
+- **Dropdown option (normal)**: `text-jam-bg hover:bg-jam-bg/10`.
+- **Label**: `text-[10px] font-black uppercase tracking-[0.18em] text-jam-muted`.
+- **Error message**: `text-[11px] font-bold uppercase tracking-[0.1em] text-jam-danger`.
+- **Hint text**: `text-[11px] font-medium tracking-[0.08em] text-jam-soft/70`.
+
+---
+
+## Examples
+
+### Basic Combobox
+```svelte
+<script lang="ts">
+  import { Combobox } from 'jamui';
+
+  let fruit = $state('');
+
+  const fruits = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape'];
+</script>
+
+<Combobox label="Fruit" options={fruits} bind:value={fruit} placeholder="Search fruits..." />
+```
+
+### Combobox with Size and Error
+```svelte
+<script lang="ts">
+  import { Combobox } from 'jamui';
+
+  let country = $state('');
+  const countries = ['Brazil', 'Canada', 'Germany', 'Japan', 'United States'];
+</script>
+
+<Combobox
+  label="Country"
+  options={countries}
+  bind:value={country}
+  size="lg"
+  error={country === '' ? 'Please select a country' : ''}
+  hint="Start typing to filter"
+/>
+```
+
+### Disabled Combobox
+```svelte
+<script lang="ts">
+  import { Combobox } from 'jamui';
+
+  const languages = ['JavaScript', 'Python', 'Rust', 'Svelte', 'TypeScript'];
+</script>
+
+<Combobox label="Language" options={languages} disabled value="Svelte" />
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `ArrowDown`: Opens the menu if closed; moves focus to the next option.
+  - `ArrowUp`: Opens the menu if closed; moves focus to the previous option.
+  - `Enter`: Selects the currently active option if the menu is open; opens the menu otherwise.
+  - `Escape`: Closes the menu and restores focus to the input. Commits the current value.
+  - `Tab`: Closes the menu and commits the current value. Moves focus to the next element.
+- **ARIA attributes managed**:
+  - `role="combobox"` on the input element.
+  - `aria-expanded` indicates whether the dropdown is open.
+  - `aria-autocomplete="list"` signals typeahead behavior.
+  - `aria-controls` links the input to the listbox by ID.
+  - `aria-activedescendant` highlights the currently focused option.
+  - `aria-labelledby` links the input to its label.
+  - `aria-describedby` links the input to hint/error text.
+  - `aria-invalid="true"` set when an error is present.
+  - `role="listbox"` on the dropdown container.
+  - `role="option"` on each dropdown item.
+  - `aria-selected` on each option indicates the selected state.
+  - `aria-live="polite"` on the error message region.

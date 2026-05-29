@@ -1,0 +1,152 @@
+# JamUI — Popover
+
+> A positioned, animated popover overlay with trigger, anchor, and close sub-components.
+
+## Popover API & Usage Guide
+
+The JamUI Popover is a set of Svelte 5 components that create a floating dialog panel anchored to a trigger or custom anchor element. It uses Svelte 5 Runes (`$state`, `$derived`, `$props`, `$bindable`, `$effect`, `tick`) and context-based state management. The popover automatically handles positioning, viewport collision detection, click-outside dismissal, and keyboard interaction.
+
+### Component Structure
+
+- `Popover`: Root container that manages open state, positioning, and context.
+- `PopoverAnchor`: Optional element that defines an alternative positioning anchor (instead of the trigger).
+- `PopoverClose`: Button that closes the popover, with a default X icon.
+
+---
+
+## Components API
+
+### Popover.svelte
+
+Root wrapper component that manages open/close state, calculates positioning, and provides context to children.
+
+#### Props
+- `children`: `Snippet` (optional). Content rendered inside the popover panel.
+- `trigger`: `Snippet<[PopoverTriggerProps]>` (required). Render function for the trigger element. Receives props including `onclick`, `onkeydown`, `aria-haspopup`, `aria-expanded`, `aria-controls`, and `ref`.
+- `class`: `string` (default: `''`). Additional CSS classes for the wrapper div.
+- `open`: `boolean` (bindable, default: `false`). Controls whether the popover is visible.
+- `position`: `'top' | 'bottom' | 'left' | 'right'` (default: `'bottom'`). Preferred placement of the popover relative to the trigger/anchor.
+- `align`: `'start' | 'center' | 'end'` (default: `'center'`). Alignment of the popover along the side axis.
+- `sideOffset`: `number` (default: `8`). Gap in pixels between the trigger/anchor and the popover along the side axis.
+- `alignOffset`: `number` (default: `0`). Offset in pixels along the alignment axis.
+- `onopenchange`: `(open: boolean) => void` (optional). Callback fired when the open state changes.
+
+---
+
+### PopoverAnchor.svelte
+
+Optional wrapper that registers a custom anchor element for positioning the popover (instead of positioning relative to the trigger).
+
+#### Props
+- `children`: `Snippet` (optional). Content rendered inside the anchor div.
+- `class`: `string` (default: `''`). Additional CSS classes for the anchor div.
+- Inherits all standard HTML `<div>` attributes.
+
+---
+
+### PopoverClose.svelte
+
+Button that closes the parent popover. Renders a default X icon (from Lucide) when no children are provided.
+
+#### Props
+- `children`: `Snippet` (optional). Custom content for the close button. If omitted, renders an X icon.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- `aria-label`: `string` (default: `'Fechar'` when no children). Accessible label for the button.
+- Inherits all standard HTML `<button>` attributes (except `class` and `onclick`).
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Variants Style mapping:
+- **Popover content (visible)**: `opacity-100 scale-100` — fully visible, scaled to 100%.
+- **Popover content (hidden)**: `opacity-0 scale-95 pointer-events-none` — invisible, scaled down, non-interactive.
+- **Popover content base**: `fixed z-50 w-max max-w-sm border border-jam-bg/15 bg-jam-text p-4 font-jam-mono text-jam-bg shadow-jam-hard-blue-sm transition-all duration-200 ease-out`.
+- **PopoverClose button**: `flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center border border-jam-bg/20 bg-transparent text-jam-bg/70 transition-colors duration-150 hover:border-jam-bg hover:bg-jam-bg/10 hover:text-jam-bg focus:outline-none focus-visible:ring-2 focus-visible:ring-jam-bg focus-visible:ring-offset-2 focus-visible:ring-offset-jam-text`.
+
+---
+
+## Examples
+
+### Basic Popover
+```svelte
+<script lang="ts">
+  import { Popover } from 'jamui';
+</script>
+
+<Popover position="bottom" align="center">
+  {#snippet trigger(props)}
+    <button {...props}>Open Popover</button>
+  {/snippet}
+  <div class="text-sm">
+    <p>This is the popover content.</p>
+  </div>
+</Popover>
+```
+
+### Popover with Anchor and Close Button
+```svelte
+<script lang="ts">
+  import { Popover, PopoverAnchor, PopoverClose } from 'jamui';
+</script>
+
+<Popover position="top">
+  {#snippet trigger(props)}
+    <button {...props}>Hover me</button>
+  {/snippet}
+  <PopoverAnchor>
+    <div class="p-2">Anchor element</div>
+  </PopoverAnchor>
+  <div class="flex items-center justify-between gap-4">
+    <span class="text-sm">Popover with close button</span>
+    <PopoverClose />
+  </div>
+</Popover>
+```
+
+### Controlled Popover
+```svelte
+<script lang="ts">
+  import { Popover } from 'jamui';
+
+  let isOpen = $state(false);
+
+  function handleChange(open: boolean) {
+    isOpen = open;
+    console.log('Popover is now:', open ? 'open' : 'closed');
+  }
+</script>
+
+<button onclick={() => (isOpen = !isOpen)}>Toggle</button>
+<Popover bind:open={isOpen} onopenchange={handleChange} position="right">
+  {#snippet trigger(props)}
+    <span {...props} class="cursor-pointer underline">Trigger</span>
+  {/snippet}
+  <p>Controlled popover content.</p>
+</Popover>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `ArrowDown` / `Enter` / `Space` on trigger: Opens the popover.
+  - `Escape` inside popover: Closes the popover and returns focus to the trigger.
+  - `Tab` behavior: Focus is trapped within the popover when open; click-outside also closes it.
+- **ARIA attributes managed**:
+  - `aria-haspopup="dialog"` on the trigger element.
+  - `aria-expanded` reflects the open state on the trigger.
+  - `aria-controls` links the trigger to the popover content by ID.
+  - `role="dialog"` on the popover content panel.
+  - `tabindex="-1"` on the popover content for programmatic focus.
+  - `id` is auto-generated on the content for the `aria-controls` relationship.

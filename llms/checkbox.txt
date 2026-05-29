@@ -1,0 +1,128 @@
+# JamUI — Checkbox
+
+> A monospace, high-contrast, fully accessible checkbox component for Svelte 5 (using Runes) and styled with Tailwind CSS.
+
+## Checkbox API & Usage Guide
+
+The JamUI Checkbox is a single Svelte component that renders a custom-styled checkbox with an accessible label. It uses Svelte 5 Runes (`$props`, `$derived`, `$bindable`) for reactive state management. The native `<input type="checkbox">` is visually hidden (`sr-only`) but remains functional, with a custom visual indicator that shows `Check` or `Minus` icons depending on state. The component supports checked, indeterminate, and disabled states.
+
+### Component Structure
+
+- `Checkbox`: A standalone checkbox component with label, visual indicator, and state management. No sub-components needed.
+
+---
+
+## Components API
+
+### Checkbox.svelte
+
+The checkbox component. Renders a `<label>` wrapping a hidden `<input>` and a visible custom checkbox indicator.
+
+#### Props
+- `checked`: `boolean` (bindable, default: `false`). The checked state. Can be bound with `bind:checked`.
+- `children`: `Snippet` (optional). Custom label content rendered as a `<span>`.
+- `class`: `string` (default: `''`). Additional CSS classes.
+- `disabled`: `boolean` (default: `false`). Disables the checkbox, preventing interaction and applying muted styles.
+- `id`: `string` (optional). The HTML id attribute for the hidden input.
+- `indeterminate`: `boolean` (default: `false`). Shows the indeterminate (minus) icon regardless of checked state. Useful for "select all" patterns.
+- `label`: `string` (default: `''`). Text label rendered as a `<span>` if no `children` snippet is provided.
+- `value`: `string` (default: `'on'`). The value attribute of the hidden input.
+- Plus all standard `HTMLInputAttributes` props (spread onto the hidden `<input>`).
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Checkbox indicator base:
+`relative inline-grid h-[18px] w-[18px] shrink-0 place-items-center overflow-hidden rounded-none border box-border leading-none transition-colors duration-150`
+
+#### State-based box styles:
+- **Disabled**: `border-jam-text/20 bg-jam-input/40`
+- **Checked or Indeterminate**: `border-jam-text bg-jam-text`
+- **Unchecked (default)**: `border-jam-text/35 bg-jam-input hover:border-jam-text/60`
+
+#### Icon:
+- `pointer-events-none absolute inset-0 m-auto block shrink-0 text-jam-bg`
+- Check icon: `<Check size={14} strokeWidth={3}>` (Lucide)
+- Indeterminate icon: `<Minus size={14} strokeWidth={3}>` (Lucide)
+
+#### Label:
+- `text-xs font-bold leading-tight`
+- **Disabled**: `text-jam-muted/50`
+- **Enabled**: `text-jam-text`
+
+#### Focus ring (via peer):
+- `peer-focus-visible:ring-2 peer-focus-visible:ring-jam-text peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-jam-bg`
+
+---
+
+## Examples
+
+### Basic Checkbox
+```svelte
+<script lang="ts">
+  import { Checkbox } from 'jamui';
+
+  let checked = $state(false);
+</script>
+
+<Checkbox bind:checked label="Accept terms" />
+<p>Checked: {checked}</p>
+```
+
+### Checkbox with children label
+```svelte
+<script lang="ts">
+  import { Checkbox } from 'jamui';
+
+  let agreed = $state(false);
+</script>
+
+<Checkbox bind:checked={agreed}>
+  I agree to the terms and conditions
+</Checkbox>
+```
+
+### Indeterminate Checkbox
+```svelte
+<script lang="ts">
+  import { Checkbox } from 'jamui';
+
+  let allSelected = $state(false);
+  let indeterminate = $state(true);
+</script>
+
+<Checkbox bind:checked={allSelected} bind:indeterminate label="Select all items" />
+```
+
+### Disabled Checkbox
+```svelte
+<script lang="ts">
+  import { Checkbox } from 'jamui';
+</script>
+
+<Checkbox disabled label="Cannot interact" />
+<Checkbox disabled checked label="Disabled and checked" />
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `Tab`: Moves focus to/from the checkbox (the hidden native `<input>`).
+  - `Space`: Toggles the checked state.
+- **ARIA attributes managed**:
+  - The native `<input type="checkbox">` retains its built-in ARIA semantics.
+  - `sr-only` class hides the input visually but keeps it accessible to screen readers.
+  - The custom visual indicator has `aria-hidden="true"` (decorative).
+  - `indeterminate` state is set via the native `HTMLInputElement.indeterminate` property.
