@@ -1,0 +1,165 @@
+# JamUI - Accordion Component
+
+> A monospace, high-contrast, fully accessible accordion component library for Svelte 5 (using Runes) and styled with Tailwind CSS.
+
+## Accordion API & Usage Guide
+
+The JamUI Accordion is a set of Svelte components that build an accessible accordion. It uses Svelte 5 Runes (`$state`, `$derived`, `$props`, `$bindable`, `untrack`) and context-based state management.
+
+### Component Structure
+
+The Accordion is built using four main components:
+- `Accordion`: Root container that holds the state.
+- `AccordionItem`: Container for a single accordion item.
+- `AccordionTrigger`: Header/button that toggles the item.
+- `AccordionContent`: The panel that expands/collapses.
+
+---
+
+## Components API
+
+### Accordion.svelte
+
+Main wrapper component.
+
+#### Props
+- `type`: `'single' | 'multiple'` (default: `'single'`). Determines if one or multiple items can be open at the same time.
+- `value`: `string | string[]` (bindable). The active item value(s).
+- `defaultValue`: `string | string[]` (default: `[]`). Initial active item value(s).
+- `onValueChange`: `(value: string | string[]) => void`. Callback fired when the active item changes.
+- `collapsible`: `boolean` (default: `false`). If `true` and `type` is `'single'`, allows closing the active item by clicking it again.
+- `disabled`: `boolean` (default: `false`). If `true`, disables all accordion items.
+- `variant`: `'default' | 'bordered' | 'separated' | 'filled' | 'ghost'` (default: `'default'`). Styling variant.
+- `size`: `'sm' | 'md' | 'lg'` (default: `'md'`). Controls padding and font-size of trigger and content.
+- `icon`: `Snippet<[boolean]>` (optional). Custom Svelte 5 snippet to render the trigger icon (receives the open state `boolean` as argument).
+
+---
+
+### AccordionItem.svelte
+
+Wrapper for each item. Must be a child of `Accordion`.
+
+#### Props
+- `value`: `string` (required). A unique identifier for the item.
+- `disabled`: `boolean` (default: `false`). Disables this specific item.
+
+---
+
+### AccordionTrigger.svelte
+
+The toggle button for the item. Must be a child of `AccordionItem`.
+
+#### Props
+- `headingLevel`: `1 | 2 | 3 | 4 | 5 | 6` (default: `3`). Renders the trigger inside a semantic heading tag (e.g., `<h3>`).
+
+---
+
+### AccordionContent.svelte
+
+The panel containing the content. Must be a child of `AccordionItem`.
+
+---
+
+## Design System Tokens & Styling
+
+JamUI uses Tailwind CSS utility classes and custom theme tokens:
+- **Background**: `#1713c8` (`bg-jam-bg`)
+- **Surface**: `#1410bd` (`bg-jam-surface`)
+- **Input Surface**: `#0f0ca4` (`bg-jam-input`)
+- **Primary Text**: `#fbfbff` (`text-jam-text`)
+- **Muted Text**: `#d8d7ff` (`text-jam-muted`)
+- **Mono Font**: `font-jam-mono`
+- **Hard Shadow**: `shadow-jam-hard-sm`, `shadow-jam-hard-md`
+
+#### Variants Style mapping:
+- `default`: Underline border (`border-b border-jam-bg/20`)
+- `bordered`: Complete border, margin bottom (`border border-jam-bg/30 mb-2`)
+- `separated`: Complete border, margin bottom, surface background (`border border-jam-bg/30 mb-3 bg-jam-surface`)
+- `filled`: Surface background, margin bottom (`bg-jam-surface mb-2`)
+- `ghost`: Margin bottom, no borders/background (`mb-1`)
+
+---
+
+## Examples
+
+### Basic Single Accordion
+```svelte
+<script lang="ts">
+  import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from 'jamui';
+</script>
+
+<Accordion type="single" collapsible>
+  <AccordionItem value="item-1">
+    <AccordionTrigger>Is it accessible?</AccordionTrigger>
+    <AccordionContent>
+      Yes, it follows WAI-ARIA patterns.
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="item-2">
+    <AccordionTrigger>Is it styled?</AccordionTrigger>
+    <AccordionContent>
+      Yes, with JamUI high-contrast aesthetic.
+    </AccordionContent>
+  </AccordionItem>
+</Accordion>
+```
+
+### Multiple Accordion with custom binding and variants
+```svelte
+<script lang="ts">
+  import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from 'jamui';
+
+  let activeValues = $state(['item-1']);
+</script>
+
+<Accordion type="multiple" bind:value={activeValues} variant="separated" size="lg">
+  <AccordionItem value="item-1">
+    <AccordionTrigger>Section 1</AccordionTrigger>
+    <AccordionContent>Content for section 1.</AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="item-2">
+    <AccordionTrigger>Section 2</AccordionTrigger>
+    <AccordionContent>Content for section 2.</AccordionContent>
+  </AccordionItem>
+</Accordion>
+```
+
+### Custom Icon Accordion
+```svelte
+<script lang="ts">
+  import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from 'jamui';
+  import Plus from 'lucide-svelte/icons/plus';
+  import Minus from 'lucide-svelte/icons/minus';
+</script>
+
+{#snippet customIcon(isOpen)}
+  {#if isOpen}
+    <Minus size={16} />
+  {:else}
+    <Plus size={16} />
+  {/if}
+{/snippet}
+
+<Accordion type="single" icon={customIcon}>
+  <AccordionItem value="item-1">
+    <AccordionTrigger>Accordion with Custom Icon</AccordionTrigger>
+    <AccordionContent>
+      This accordion uses a custom plus/minus icon snippet.
+    </AccordionContent>
+  </AccordionItem>
+</Accordion>
+```
+
+---
+
+## Accessibility & Interactions
+
+- **Keyboard Navigation**:
+  - `ArrowDown`: Moves focus to the next enabled trigger.
+  - `ArrowUp`: Moves focus to the previous enabled trigger.
+  - `Home`: Moves focus to the first enabled trigger.
+  - `End`: Moves focus to the last enabled trigger.
+- **ARIA attributes managed**:
+  - `role="region"` and `aria-labelledby` on the content container.
+  - `aria-expanded` and `aria-controls` on the trigger button.
+  - `inert` and `aria-hidden` attributes applied correctly on closed state to prevent tab navigation into hidden panels.
